@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Chat UI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="/bootstrap-5.3.6-dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/ae99efb87b.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+
+        <div class="contact-list" id="contactList">
+            <div
+                class="contact-header d-flex justify-content-between align-items-center px-3 py-2 bg-secondary text-white">
+                <div class="fs-3 fw-bold">Chats</div>
+                <i class="fa-solid fa-plus fs-5"></i>
+            </div>
+
+
+            <div class="contact-item" onclick="openChat()">
+                <img src="https://i.pravatar.cc/150?img=20" class="contact-avatar" />
+                <div class="contact-info">
+                    <div class="contact-name">Ali Khan</div>
+                    <div class="contact-message">Hey! What’s up?</div>
+                </div>
+                <div class="contact-time">9:32 PM</div>
+            </div>
+
+            <div class="contact-item" onclick="openChat()">
+                <img src="https://i.pravatar.cc/150?img=25" class="contact-avatar" />
+                <div class="contact-info">
+                    <div class="contact-name">Sara Ahmed</div>
+                    <div class="contact-message">Sent you the file ✅</div>
+                </div>
+                <div class="contact-time">8:45 PM</div>
+            </div>
+        </div>
+
+        <div class="chat-section d-sm-flex" id="chatSection">
+            <div class="chat-header p-2 p-md-3 py-md-2 bg-secondary">
+                <button class="btn btn-light btn-sm d-sm-none d-md-none me-2" onclick="goBack()"><i
+                        class="fa-solid fa-arrow-left"></i></button>
+                <img class="m-0 me-2" src="https://i.pravatar.cc/150?img=32" alt="User" />
+                <div class="chat-user-info">
+                    <div class="chat-username">John Doe</div>
+                    <div class="chat-status">online</div>
+                </div>
+            </div>
+
+            <div id="chat" class="p-2 p-md-3">
+                <div class="message left">Hello! How can I help you?</div>
+                <div class="message right">Hi! I need information about your services.</div>
+                <div class="message left">Sure! We offer web development and app development courses.</div>
+                <div class="message right">That sounds good. How can I enroll?</div>
+            </div>
+
+            <div class="chat-bar">
+                <input class="chat-bar__input" type="text" placeholder="Message...">
+                <div class="chat-bar__buttons">
+                    <i class="fas fa-camera"></i>
+                    <i class="fas fa-paperclip"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function openChat() {
+            document.getElementById('contactList').style.display = 'none';
+            document.getElementById('chatSection').style.display = 'flex';
+        }
+
+        function goBack() {
+            document.getElementById('chatSection').style.display = 'none';
+            document.getElementById('contactList').style.display = 'flex';
+        }
+    </script>
+</body>
+
+</html>
