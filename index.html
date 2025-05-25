@@ -2,57 +2,106 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsive Chat UI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link href="/bootstrap-5.3.6-dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modern Chat UI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+    <link href="style.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/bootstrap-5.3.6-dist/css/bootstrap.min.css">
     <script src="https://kit.fontawesome.com/ae99efb87b.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div class="app-container">
 
+    <!-- Fullscreen Loader -->
+    <div id="chatLoader"
+        class="d-flex position-fixed top-0 start-0 w-100 h-100 bg-white justify-content-center align-items-center"
+        style="z-index: 9999;">
+        <div class="text-center">
+            <div class="spinner-grow text-primary" role="status"></div>
+            <div class="spinner-grow text-secondary" role="status"></div>
+            <div class="spinner-grow text-success" role="status"></div>
+            <p class="mt-3 fw-bold">Loading your chats...</p>
+        </div>
+    </div>
+
+
+    <div class="register-container-wrapper">
+        <div class="register-container p-3">
+            <div class="register-box sign-up">
+                <h2 class="headings mb-3">Register</h2>
+                <div id="profilePic" class="d-flex flex-column align-items-center">
+                    <img id="ProfileImg"
+                        src="data:image/jpeg;base64,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"
+                        class="" alt="...">
+                    <div class="mt-3">
+                        <label for="profile-upload" class="plus-icon-label">
+                            <i class="fa-solid fa-plus"></i>
+                        </label>
+                        <input type="file" id="profile-upload" class="custom-file-input" accept="image/*" />
+                    </div>
+                </div>
+                <form>
+                    <label for="email">Name</label>
+                    <input type="tel" id="nameInp" class="inputs mb-2" minlength="3" name="email"
+                        placeholder="e.g example@mail.com" />
+                    <label for="email">Email</label>
+                    <input type="tel" id="signUpEmailInp" class="inputs mb-1" name="email"
+                        placeholder="e.g example@mail.com" />
+                    <span class="emailValidate mb-2 text-danger"></span>
+                    <label for="pass">Password</label>
+                    <input type="password" id="signUpPasswordInp" class="inputs mb-1" name="pass"
+                        placeholder="atleat 8 character" minlength="8" />
+                    <span class="passValidate mb-2 text-danger"></span>
+                    <span class="text-light mb-2">already have an account ? <a href="javascript:void(0)"
+                            class="signInShow text-primary text-decoration-none text-nowrap">Sign In</a></span>
+                    <button type="submit" id="signUpBtn" class="rounded" disabled>Continue</button>
+                </form>
+            </div>
+
+            <div class="register-box sign-in d-none">
+                <h2 class="headings">Sign In</h2>
+                <form>
+                    <label for="email">Email</label>
+                    <input type="tel" id="signInEmailInp" class="inputs mb-1" name="email"
+                        placeholder="e.g example@mail.com" />
+                    <span class="emailValidate mb-2 text-danger"></span>
+                    <label for="pass">Password</label>
+                    <input type="password" id="signInPasswordInp" class="inputs mb-1" name="pass"
+                        placeholder="atleat 8 character" minlength="8" />
+                    <span class="passValidate mb-2 text-danger"></span>
+                    <span class="text-light mb-3">don't have an account ? <a href="javascript:void(0)"
+                            class="signUpShow text-primary text-decoration-none text-nowrap">Sign Up</a></span>
+                    <button type="submit" id="loginBtn" class="rounded" disabled>Continue</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="app-container d-none">
         <div class="contact-list" id="contactList">
-            <div
-                class="contact-header d-flex justify-content-between align-items-center px-3 py-2 bg-secondary text-white">
-                <div class="fs-3 fw-bold">Chats</div>
-                <i class="fa-solid fa-plus fs-5"></i>
+            <div class="contact-header">
+                <span>Chats</span>
+                <i id="addUser" class="fa-solid fa-plus fs-5 text-primary" style="cursor: pointer;"></i>
             </div>
 
 
-            <div class="contact-item" onclick="openChat()">
-                <img src="https://i.pravatar.cc/150?img=20" class="contact-avatar" />
-                <div class="contact-info">
-                    <div class="contact-name">Ali Khan</div>
-                    <div class="contact-message">Hey! What’s up?</div>
-                </div>
-                <div class="contact-time">9:32 PM</div>
-            </div>
 
-            <div class="contact-item" onclick="openChat()">
-                <img src="https://i.pravatar.cc/150?img=25" class="contact-avatar" />
-                <div class="contact-info">
-                    <div class="contact-name">Sara Ahmed</div>
-                    <div class="contact-message">Sent you the file ✅</div>
-                </div>
-                <div class="contact-time">8:45 PM</div>
+            <div id="contact-list-contaner">
+                
             </div>
         </div>
 
-        <div class="chat-section d-sm-flex" id="chatSection">
-            <div class="chat-header p-2 p-md-3 py-md-2 bg-secondary">
-                <button class="btn btn-light btn-sm d-sm-none d-md-none me-2" onclick="goBack()"><i
-                        class="fa-solid fa-arrow-left"></i></button>
-                <img class="m-0 me-2" src="https://i.pravatar.cc/150?img=32" alt="User" />
+        <div class="chat-section" id="chatSection">
+            <div class="chat-header">
+                <button class="chatBackBtn d-none"><i class="fa-solid fa-arrow-left"></i></button>
+                <img src="https://i.pravatar.cc/150?img=32" alt="User" />
                 <div class="chat-user-info">
                     <div class="chat-username">John Doe</div>
                     <div class="chat-status">online</div>
                 </div>
             </div>
 
-            <div id="chat" class="p-2 p-md-3">
+            <div id="chat">
                 <div class="message left">Hello! How can I help you?</div>
                 <div class="message right">Hi! I need information about your services.</div>
                 <div class="message left">Sure! We offer web development and app development courses.</div>
@@ -67,20 +116,23 @@
                 </div>
             </div>
         </div>
-
     </div>
 
-    <script>
-        function openChat() {
-            document.getElementById('contactList').style.display = 'none';
-            document.getElementById('chatSection').style.display = 'flex';
-        }
+    <div class="custom-modal-wrapper d-none" id="searchUserModal">
+        <div class="custom-modal p-3">
+            <h2 class="modal-title">Start New Chat</h2>
+            <input type="email" id="searchEmailInput" class="inputs modal-input" placeholder="Enter user's email">
+            <div id="searchError" class="modal-error">User not found.</div>
+            <button id="searchUserBtn" class="modal-btn" disabled>Search</button>
+            <i id="closeAddUser" class="fa-solid fa-xmark modal-close"></i>
+        </div>
+    </div>
 
-        function goBack() {
-            document.getElementById('chatSection').style.display = 'none';
-            document.getElementById('contactList').style.display = 'flex';
-        }
-    </script>
+
+
+
+    <script type="module" src="/js/main.js"></script>
+    <script src="/bootstrap-5.3.6-dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
