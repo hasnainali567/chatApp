@@ -40,12 +40,23 @@ onAuthStateChanged(auth, async (user) => {
       const friendsList = userData.friends || [];
       let contacts = setFriends(friendsList);  // tumhara state update ho gaya
 
-      contacts.forEach(elem => {
+      console.log(friendsList);
+      
+      console.log(contacts);
+      
+      if (contacts.length > 0) {
+        // contactListContaner.innerHTML = '';
+        contacts.forEach(elem => {
         contactListContaner.prepend(elem)
       })
+      } else {
+        contactListContaner.innerHTML = `<p class="text-light text-center p-4">Plz! Add contact to start Chating</p>`
+      }
     }
 
     chatLoader.classList.add('d-none');
+  } else {
+    chatLoader.classList.add('d-none')
   }
 })
 
@@ -197,10 +208,10 @@ signUpBtn.addEventListener('click', async (e) => {
     let userId = userCredential.user.uid;
 
     await setDoc(doc(db, 'users', userId), {
-      name,
+      name: name.value,
       email,
       userId,
-      profileImage: ""  // Or null, or default
+      profileImage: ""
     });
 
     signUpBtn.innerHTML = `Sign Up`;
@@ -365,7 +376,12 @@ searchUserBtn.addEventListener('click', async () => {
       let searchedUser = user;
 
       await updateDoc(doc(db, "users", currentUserId), {
-        friends: user
+        friends: arrayUnion({
+          name: searchedUser.name,
+          email: searchedUser.email,
+          profileImage: searchedUser.profileImage,
+          uid: searchedUser.userId
+        })
       });
 
 
@@ -373,6 +389,8 @@ searchUserBtn.addEventListener('click', async () => {
 
       contact.forEach(elem => {
         contactListContaner.prepend(elem);
+        console.log('i am here');
+        
       })
 
     });
