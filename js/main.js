@@ -25,6 +25,7 @@ const signInShow = document.querySelector('.signInShow');
 const contactList = document.getElementById('contactList');
 const chatSection = document.getElementById('chatSection');
 const addUser = document.getElementById('addUser');
+const chatDp = document.getElementById('chatDp');
 const closeAddUser = document.getElementById('closeAddUser');
 const searchUserBtn = document.getElementById('searchUserBtn');
 const contactListContaner = document.getElementById('contact-list-contaner');
@@ -38,20 +39,25 @@ onAuthStateChanged(auth, async (user) => {
     if (userDocSnap.exists()) {
       const userData = userDocSnap.data();
       const friendsList = userData.friends || [];
-      let contacts = setFriends(friendsList);  // tumhara state update ho gaya
+      let contacts;  // tumhara state update ho gaya
+
+      if (friendsList.length > 0) {
+        contacts = setFriends(friendsList);
+        if (contacts.length > 0) {
+          // contactListContaner.innerHTML = '';
+          contacts.forEach(elem => {
+            contactListContaner.prepend(elem)
+          })
+        } else {
+          contactListContaner.innerHTML = `<p class="text-light text-center p-4">Plz! Add contact to start Chating</p>`
+        }
+      }
 
       console.log(friendsList);
-      
+
       console.log(contacts);
-      
-      if (contacts.length > 0) {
-        // contactListContaner.innerHTML = '';
-        contacts.forEach(elem => {
-        contactListContaner.prepend(elem)
-      })
-      } else {
-        contactListContaner.innerHTML = `<p class="text-light text-center p-4">Plz! Add contact to start Chating</p>`
-      }
+
+
     }
 
     chatLoader.classList.add('d-none');
@@ -368,7 +374,7 @@ searchUserBtn.addEventListener('click', async () => {
       return;
     }
 
-    querySnapshot.forEach( async (res) => {
+    querySnapshot.forEach(async (res) => {
       const user = res.data();
       console.log("User found:", user);
 
@@ -390,7 +396,7 @@ searchUserBtn.addEventListener('click', async () => {
       contact.forEach(elem => {
         contactListContaner.prepend(elem);
         console.log('i am here');
-        
+
       })
 
     });
@@ -408,15 +414,15 @@ function setFriends(...friends) {
 
   friends.forEach(elem => {
     let contact = document.createElement('div');
-      contact.classList.add('contact-item')
-      contact.innerHTML = `<img src="https://i.pravatar.cc/150?img=25" class="contact-avatar" />
+    contact.classList.add('contact-item')
+    contact.innerHTML = `<img src="${elem.profileImage}" class="contact-avatar" />
                            <div class="contact-info">
                             <div class="contact-name">${elem.name}</div>
                             <div class="contact-message">Sent you the file ✅</div>
                            </div>
                             <div class="contact-time">8:45 PM</div>`
 
-      contacts.push(contact);
+    contacts.push(contact);
 
   })
 
