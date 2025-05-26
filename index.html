@@ -87,34 +87,33 @@
 
 
             <div id="contact-list-contaner">
-                
+
             </div>
         </div>
 
-        <div class="chat-section" id="chatSection">
-            <div class="chat-header">
-                <button class="chatBackBtn d-none"><i class="fa-solid fa-arrow-left"></i></button>
-                <img src="https://i.pravatar.cc/150?img=32" id="chatDp" alt="User" />
-                <div class="chat-user-info">
-                    <div class="chat-username">John Doe</div>
-                    <div class="chat-status">online</div>
+        <div class="chat-section position-relative" id="chatSection">
+
+            <div id="defaultChatScreen" class="default-chat-screen">
+                <div class="default-chat-content">
+                    <img src="https://img.freepik.com/premium-vector/chat-app-logo-design-template-can-be-used-icon-chat-application-logo_605910-1724.jpg"
+                        class="default-logo" />
+                    <h2>Welcome to MyChat</h2>
+                    <p>Select a contact to start chatting</p>
                 </div>
             </div>
 
-            <div id="chat">
-                <div class="message left">Hello! How can I help you?</div>
-                <div class="message right">Hi! I need information about your services.</div>
-                <div class="message left">Sure! We offer web development and app development courses.</div>
-                <div class="message right">That sounds good. How can I enroll?</div>
-            </div>
-
-            <div class="chat-bar">
-                <input class="chat-bar__input" type="text" placeholder="Message...">
-                <div class="chat-bar__buttons">
-                    <i class="fas fa-camera"></i>
-                    <i class="fas fa-paperclip"></i>
+            <div id="chatLoader"
+                class="chat-chatLoader d-none position-absolute top-0 start-0 w-100 h-100 bg-white justify-content-center align-items-center"
+                style="z-index: 9999;">
+                <div class="text-center">
+                    <div class="spinner-grow text-primary" role="status"></div>
+                    <div class="spinner-grow text-secondary" role="status"></div>
+                    <div class="spinner-grow text-success" role="status"></div>
+                    <p class="mt-3 fw-bold">Loading your chats...</p>
                 </div>
             </div>
+
+            
         </div>
     </div>
 

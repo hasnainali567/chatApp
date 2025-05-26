@@ -12,7 +12,6 @@ const signInPasswordInp = document.getElementById('signInPasswordInp');
 const searchEmailInput = document.getElementById('searchEmailInput');
 const contactItems = document.querySelectorAll('.contact-item');
 const chatLoader = document.getElementById('chatLoader');
-const chatBackBtn = document.querySelector('.chatBackBtn');
 const appContainer = document.querySelector('.app-container');
 const registerContainerWrapper = document.querySelector('.register-container-wrapper');
 const signUp = document.querySelector('.sign-up');
@@ -25,10 +24,10 @@ const signInShow = document.querySelector('.signInShow');
 const contactList = document.getElementById('contactList');
 const chatSection = document.getElementById('chatSection');
 const addUser = document.getElementById('addUser');
-const chatDp = document.getElementById('chatDp');
 const closeAddUser = document.getElementById('closeAddUser');
 const searchUserBtn = document.getElementById('searchUserBtn');
 const contactListContaner = document.getElementById('contact-list-contaner');
+
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
@@ -42,9 +41,9 @@ onAuthStateChanged(auth, async (user) => {
       let contacts;  // tumhara state update ho gaya
 
       if (friendsList.length > 0) {
-        contacts = setFriends(friendsList);
+        contacts = setFriends(...friendsList);
         if (contacts.length > 0) {
-          // contactListContaner.innerHTML = '';
+          contactListContaner.innerHTML = '';
           contacts.forEach(elem => {
             contactListContaner.prepend(elem)
           })
@@ -52,11 +51,6 @@ onAuthStateChanged(auth, async (user) => {
           contactListContaner.innerHTML = `<p class="text-light text-center p-4">Plz! Add contact to start Chating</p>`
         }
       }
-
-      console.log(friendsList);
-
-      console.log(contacts);
-
 
     }
 
@@ -75,49 +69,6 @@ addUser.addEventListener('click', () => {
 closeAddUser.addEventListener('click', () => {
   document.querySelector('.custom-modal-wrapper').classList.add('d-none')
 })
-
-const setupClickEvents = () => {
-  contactItems.forEach(elem => {
-    elem.addEventListener('click', () => {
-      if (window.innerWidth < 660) {
-        chatBackBtn.classList.remove('d-none');
-        contactList.style.display = 'none';
-        chatSection.style.display = 'flex';
-      } else {
-        chatBackBtn.classList.add('d-none');
-        contactList.style.display = 'flex';
-        chatSection.style.display = 'flex';
-      }
-    });
-  });
-
-  chatBackBtn.addEventListener('click', () => {
-    chatSection.style.display = 'none';
-    contactList.style.display = 'flex';
-    chatBackBtn.classList.add('d-none');
-  });
-};
-
-const handleChatStyling = () => {
-  if (window.innerWidth >= 660) {
-    chatBackBtn.classList.add('d-none');
-    contactList.style.display = 'flex';
-    chatSection.style.display = 'flex';
-  } else {
-    chatSection.style.display = 'none';
-    contactList.style.display = 'flex';
-  }
-};
-
-window.addEventListener('load', () => {
-  handleChatStyling();
-  setupClickEvents();
-});
-
-window.addEventListener('resize', () => {
-  handleChatStyling();
-});
-
 
 profileUpload.addEventListener('change', (e) => {
   let file = profileUpload.files[0];
@@ -173,28 +124,44 @@ signUpPasswordInp.addEventListener('input', validateInputs);
 
 
 signUpBtn.addEventListener('click', async (e) => {
-  e.preventDefault()
-  signUpBtn.innerHTML = `<div class="spinner-grow text-primary" role="status">
-  <span class="visually-hidden">Loading...</span>
-</div>
-<div class="spinner-grow text-secondary" role="status">
-  <span class="visually-hidden">Loading...</span>
-</div>
-<div class="spinner-grow text-success" role="status">
-  <span class="visually-hidden">Loading...</span>
-</div>`
+  e.preventDefault();
+
+  signUpBtn.innerHTML = `
+    <div class="spinner-grow text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+    <div class="spinner-grow text-secondary" role="status"><span class="visually-hidden">Loading...</span></div>
+    <div class="spinner-grow text-success" role="status"><span class="visually-hidden">Loading...</span></div>
+  `;
+
   let email = signUpEmailInp.value;
   let pass = signUpPasswordInp.value;
-  let name = document.getElementById('nameInp')
+  let name = document.getElementById('nameInp');
   let profileImage = "";
-
-  // ✅ Convert image to Base64 if user selected one
   const file = profileUpload.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      profileImage = reader.result;
 
+  try {
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        try {
+          profileImage = reader.result;
+
+          let userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+          let userId = userCredential.user.uid;
+
+          await setDoc(doc(db, 'users', userId), {
+            name: name.value,
+            email,
+            userId,
+            profileImage
+          });
+
+          signUpBtn.innerHTML = `Sign Up`;
+        } catch (error) {
+          handleSignupError(error);
+        }
+      };
+      reader.readAsDataURL(file);
+    } else {
       let userCredential = await createUserWithEmailAndPassword(auth, email, pass);
       let userId = userCredential.user.uid;
 
@@ -202,27 +169,14 @@ signUpBtn.addEventListener('click', async (e) => {
         name: name.value,
         email,
         userId,
-        profileImage  // ✅ Save Base64 here
+        profileImage: ""
       });
 
       signUpBtn.innerHTML = `Sign Up`;
-    }; //line 179
-    reader.readAsDataURL(file);
-  } else {
-    // No image selected
-    let userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-    let userId = userCredential.user.uid;
-
-    await setDoc(doc(db, 'users', userId), {
-      name: name.value,
-      email,
-      userId,
-      profileImage: ""
-    });
-
-    signUpBtn.innerHTML = `Sign Up`;
+    }
+  } catch (error) {
+    handleSignupError(error);
   }
-
 
   function handleSignupError(error) {
     console.log(error.message);
@@ -233,8 +187,7 @@ signUpBtn.addEventListener('click', async (e) => {
     }
     signUpBtn.innerHTML = `Sign Up`;
   }
-
-})
+});
 
 
 function validateSignInInputs() {
@@ -374,38 +327,58 @@ searchUserBtn.addEventListener('click', async () => {
       return;
     }
 
-    querySnapshot.forEach(async (res) => {
-      const user = res.data();
-      console.log("User found:", user);
+        querySnapshot.forEach(async (res) => {
+      const userData = res.data();
+      const currentUser = auth.currentUser;
 
-      let currentUserId = auth.currentUser.uid;
-      let searchedUser = user;
+      if (userData.userId === currentUser.uid) {
+        showToast("You can't add yourself.");
+        return;
+      }
 
-      await updateDoc(doc(db, "users", currentUserId), {
+      const currentUserDocRef = doc(db, "users", currentUser.uid);
+      const currentUserDoc = await getDoc(currentUserDocRef);
+      const currentUserData = currentUserDoc.data();
+
+      const isAlreadyFriend = (currentUserData.friends || []).includes(userData.userId);
+
+      if (isAlreadyFriend) {
+        showToast("This user is already in your contact list.");
+        return;
+      }
+
+      // ✅ Add the user to current user's friends list
+      await updateDoc(currentUserDocRef, {
         friends: arrayUnion({
-          name: searchedUser.name,
-          email: searchedUser.email,
-          profileImage: searchedUser.profileImage,
-          uid: searchedUser.userId
+          name: userData.name,
+          email : userData.email,
+          uid: userData.userId,
+          profileImage : userData.profileImage
         })
       });
 
+      showToast(`${userData.name} added to your contacts.`);
 
-      let contact = setFriends(user)
+      // Optionally: update UI immediately with new contact
+      const contactElem = setFriends(userData);
+      if (Array.isArray(contactElem)) {
+        contactElem.forEach(elem => contactListContaner.prepend(elem));
+      } else if (contactElem) {
+        contactListContaner.prepend(contactElem);
+      }
 
-      contact.forEach(elem => {
-        contactListContaner.prepend(elem);
-        console.log('i am here');
-
-      })
-
+      // clear input
+      searchEmailInput.value = '';
+      searchUserBtn.disabled = true;
     });
-
   } catch (err) {
     console.error("Search error:", err);
     showToast("Something went wrong while searching.");
   }
 });
+
+const defaultChatScreen = document.getElementById('defaultChatScreen');
+const chatChatLoader = document.querySelector('.chat-chatLoader');
 
 
 function setFriends(...friends) {
@@ -415,19 +388,164 @@ function setFriends(...friends) {
   friends.forEach(elem => {
     let contact = document.createElement('div');
     contact.classList.add('contact-item')
+    contact.setAttribute('data-id', elem.uid)
     contact.innerHTML = `<img src="${elem.profileImage}" class="contact-avatar" />
-                           <div class="contact-info">
-                            <div class="contact-name">${elem.name}</div>
-                            <div class="contact-message">Sent you the file ✅</div>
-                           </div>
-                            <div class="contact-time">8:45 PM</div>`
+    <div class="contact-info">
+    <div class="contact-name">${elem.name}</div>
+    <div class="contact-message">Sent you the file ✅</div>
+    </div>
+    <div class="contact-time">8:45 PM</div>`
 
+    contact.addEventListener('click', (e) => {
+      if (window.innerWidth >= 660) {
+        let contactItem = e.currentTarget;
+        defaultChatScreen.classList.add('d-none')
+        chatChatLoader.classList.remove('d-none');
+        chatChatLoader.classList.add('d-flex');
+
+        let chat = `<div id="chatLoader"
+                class="chat-chatLoader d-none position-absolute top-0 start-0 w-100 h-100 bg-white justify-content-center align-items-center"
+                style="z-index: 9999;">
+                <div class="text-center">
+                    <div class="spinner-grow text-primary" role="status"></div>
+                    <div class="spinner-grow text-secondary" role="status"></div>
+                    <div class="spinner-grow text-success" role="status"></div>
+                    <p class="mt-3 fw-bold">Loading your chats...</p>
+                </div>
+            </div>
+
+            <div class="chat-header">
+                <img src="${elem.profileImage}" id="chatDp" alt="User" />
+                <div class="chat-user-info">
+                    <div class="chat-username">${elem.name}</div>
+                    <div class="chat-status">online</div>
+                </div>
+            </div>
+
+            <div id="chat">
+                <div class="message left">Hello! How can I help you?</div>
+                <div class="message right">Hi! I need information about your services.</div>
+                <div class="message left">Sure! We offer web development and app development courses.</div>
+                <div class="message right">That sounds good. How can I enroll?</div>
+            </div>
+
+            <div class="chat-bar">
+                <input class="chat-bar__input" type="text" placeholder="Message...">
+                <div class="chat-bar__buttons">
+                    <i class="btn fas fa-paper-plane"></i>
+                </div>
+            </div>`
+
+
+        setTimeout(() => {
+          chatSection.innerHTML = chat;
+          
+          const newLoader = document.querySelector('.chat-chatLoader');
+          if (newLoader) {
+            newLoader.classList.remove('d-none');
+            newLoader.classList.add('d-flex');
+          }
+        }, 0);
+
+        setTimeout(() => {
+          chatSection.innerHTML = chat;
+          const sendBtn = document.querySelector('.fa-paper-plane');
+          console.log(sendBtn);
+          
+          sendBtn.addEventListener('click', (e)=>{
+            sendMessage(e);
+          })
+          chatChatLoader.classList.add('d-none');
+
+        }, 2000)
+      } else {
+        let contactItem = e.currentTarget;
+        defaultChatScreen.classList.add('d-none');
+        contactList.classList.add('d-none');
+        chatSection.style.display = 'flex';
+        chatChatLoader.classList.remove('d-none')
+        chatChatLoader.classList.add('d-flex')
+
+        let chat = `
+            <div id="chatLoader"
+                class="chat-chatLoader d-none position-absolute top-0 start-0 w-100 h-100 bg-white justify-content-center align-items-center"
+                style="z-index: 9999;">
+                <div class="text-center">
+                    <div class="spinner-grow text-primary" role="status"></div>
+                    <div class="spinner-grow text-secondary" role="status"></div>
+                    <div class="spinner-grow text-success" role="status"></div>
+                    <p class="mt-3 fw-bold">Loading your chats...</p>
+                </div>
+            </div>
+            <div class="chat-header">
+                <button class="chatBackBtn"><i class="fa-solid fa-arrow-left"></i></button>
+                <img src="${elem.profileImage}" id="chatDp" alt="User" />
+                <div class="chat-user-info">
+                    <div class="chat-username">${elem.name}</div>
+                    <div class="chat-status">online</div>
+                </div>
+            </div>
+
+            <div id="chat">
+                <div class="message left">Hello! How can I help you?</div>
+                <div class="message right">Hi! I need information about your services.</div>
+                <div class="message left">Sure! We offer web development and app development courses.</div>
+                <div class="message right">That sounds good. How can I enroll?</div>
+            </div>
+
+            <div class="chat-bar">
+                <input class="chat-bar__input" type="text" placeholder="Message...">
+                <div class="chat-bar__buttons">
+                    <i class="btn fas fa-paper-plane"></i>
+                </div>
+            </div>`
+
+
+        setTimeout(() => {
+          chatSection.innerHTML = chat;
+          const sendBtn = document.querySelector('.fa-paper-plane');
+          console.log(sendBtn);
+          
+          sendBtn.addEventListener('click', (e)=>{
+            sendMessage(e);
+          })
+
+          const newLoader = document.getElementById('chatLoader');
+          if (newLoader) {
+            newLoader.classList.remove('d-none');
+            newLoader.classList.add('d-flex');
+          }
+
+          const chatBackBtn = document.querySelector('.chatBackBtn');
+          chatBackBtn.addEventListener('click', () => {
+            chatSection.style.display = 'none';
+            contactList.classList.remove('d-none');
+          });
+
+          // Hide loader after 2 seconds
+          setTimeout(() => {
+            const newLoader = document.getElementById('chatLoader');
+            if (newLoader) newLoader.classList.add('d-none');
+          }, 2000);
+
+        }, 0);
+
+      }
+    })
     contacts.push(contact);
 
   })
 
   return contacts;
 }
+
+
+function sendMessage(event) {
+  console.log('hi', event.target);
+  
+}
+
+
 
 
 

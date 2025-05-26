@@ -180,7 +180,7 @@ body {
 
 .chat-bar__buttons i {
   font-size: 1.2em;
-  color: #6DC8C6;
+  color: #6DC8C6 !important;
   margin-left: 10px;
   cursor: pointer;
 }
@@ -250,6 +250,7 @@ label {
   background-color: var(--accent);
   color: var(--light);
 }
+
 
 .inputs::placeholder {
   color: #7E869F;
@@ -403,6 +404,33 @@ label {
 .modal-close:hover {
   color: white;
 }
+
+
+
+.default-chat-screen {
+  height: 100%;
+  width: 100%;
+  color: #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1e1e1e;
+  flex-direction: column;
+  text-align: center;
+}
+
+.default-chat-content img.default-logo {
+  width: 120px;
+  opacity: 0.4;
+  margin-bottom: 20px;
+}
+
+.default-chat-content h2 {
+  font-size: 24px;
+  color: #dfd0b8;
+  margin-bottom: 10px;
+}
+
 
 
 @media screen and (max-width: 660px) {
