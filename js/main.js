@@ -1,4 +1,4 @@
-import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, setDoc, db, doc, query, where, getDocs, collection, getDoc, updateDoc, arrayUnion } from "./firebase.js";
+import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, setDoc, db, doc, query, where, getDocs, collection, getDoc, updateDoc, arrayUnion, serverTimestamp, orderBy, addDoc, onSnapshot } from "./firebase.js";
 
 const signUpBtn = document.getElementById('signUpBtn');
 const loginBtn = document.getElementById('loginBtn');
@@ -27,13 +27,17 @@ const addUser = document.getElementById('addUser');
 const closeAddUser = document.getElementById('closeAddUser');
 const searchUserBtn = document.getElementById('searchUserBtn');
 const contactListContaner = document.getElementById('contact-list-contaner');
-
+let chatId = '';
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     registerContainerWrapper.classList.add('d-none')
     appContainer.classList.remove('d-none');
     const userDocRef = doc(db, "users", user.uid);
+    await updateDoc(userDocRef, {
+      lastActive: serverTimestamp(),
+      isOnline: true
+    });
     const userDocSnap = await getDoc(userDocRef);
     if (userDocSnap.exists()) {
       const userData = userDocSnap.data();
@@ -169,7 +173,7 @@ signUpBtn.addEventListener('click', async (e) => {
         name: name.value,
         email,
         userId,
-        profileImage: ""
+        profileImage: "https://img.freepik.com/premium-vector/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission-sign-business-concept_157943-15752.jpg?semt=ais_hybrid&w=740"
       });
 
       signUpBtn.innerHTML = `Sign Up`;
@@ -247,9 +251,7 @@ loginBtn.addEventListener('click', async (e) => {
     console.log(appContainer);
     registerContainerWrapper.classList.add('d-none')
     appContainer.classList.remove('d-none');
-    setTimeout(() => {
-      chatLoader.classList.add('d-none')
-    }, 1000)
+    chatLoader.classList.add('d-none')
   } catch (error) {
     console.log(error.message);
 
@@ -327,7 +329,7 @@ searchUserBtn.addEventListener('click', async () => {
       return;
     }
 
-        querySnapshot.forEach(async (res) => {
+    querySnapshot.forEach(async (res) => {
       const userData = res.data();
       const currentUser = auth.currentUser;
 
@@ -351,11 +353,26 @@ searchUserBtn.addEventListener('click', async () => {
       await updateDoc(currentUserDocRef, {
         friends: arrayUnion({
           name: userData.name,
-          email : userData.email,
+          email: userData.email,
           uid: userData.userId,
-          profileImage : userData.profileImage
+          profileImage: userData.profileImage
         })
       });
+
+      const foundUserId = userData.userId;
+      chatId = [currentUser.uid, foundUserId].sort().join("_");
+
+      const chatRef = doc(db, "chats", chatId);
+      const chatSnap = await getDoc(chatRef);
+
+      if (!chatSnap.exists()) {
+        await setDoc(chatRef, {
+          chatId: chatId,
+          users: [currentUser.uid, foundUserId],
+          createdAt: serverTimestamp()
+          // You can also add lastMessage: '', messages: [] etc. as needed
+        });
+      }
 
       showToast(`${userData.name} added to your contacts.`);
 
@@ -397,6 +414,7 @@ function setFriends(...friends) {
     <div class="contact-time">8:45 PM</div>`
 
     contact.addEventListener('click', (e) => {
+      openChat(chatId);
       if (window.innerWidth >= 660) {
         let contactItem = e.currentTarget;
         defaultChatScreen.classList.add('d-none')
@@ -437,27 +455,20 @@ function setFriends(...friends) {
             </div>`
 
 
-        setTimeout(() => {
-          chatSection.innerHTML = chat;
-          
-          const newLoader = document.querySelector('.chat-chatLoader');
-          if (newLoader) {
-            newLoader.classList.remove('d-none');
-            newLoader.classList.add('d-flex');
-          }
-        }, 0);
 
-        setTimeout(() => {
-          chatSection.innerHTML = chat;
-          const sendBtn = document.querySelector('.fa-paper-plane');
-          console.log(sendBtn);
-          
-          sendBtn.addEventListener('click', (e)=>{
-            sendMessage(e);
-          })
-          chatChatLoader.classList.add('d-none');
-
-        }, 2000)
+        chatSection.innerHTML = chat;
+        const newLoader = document.querySelector('.chat-chatLoader');
+        if (newLoader) {
+          newLoader.classList.remove('d-none');
+          newLoader.classList.add('d-flex');
+        }
+        chatSection.innerHTML = chat;
+        const sendBtn = document.querySelector('.fa-paper-plane');
+        console.log(sendBtn);
+        sendBtn.addEventListener('click', (e) => {
+          sendMessage(e);
+        })
+        chatChatLoader.classList.add('d-none');
       } else {
         let contactItem = e.currentTarget;
         defaultChatScreen.classList.add('d-none');
@@ -500,36 +511,28 @@ function setFriends(...friends) {
                 </div>
             </div>`
 
+        chatSection.innerHTML = chat;
+        const sendBtn = document.querySelector('.fa-paper-plane');
+        console.log(sendBtn);
 
-        setTimeout(() => {
-          chatSection.innerHTML = chat;
-          const sendBtn = document.querySelector('.fa-paper-plane');
-          console.log(sendBtn);
-          
-          sendBtn.addEventListener('click', (e)=>{
-            sendMessage(e);
-          })
+        sendBtn.addEventListener('click', (e) => {
+          sendMessage(e);
+        })
 
-          const newLoader = document.getElementById('chatLoader');
-          if (newLoader) {
-            newLoader.classList.remove('d-none');
-            newLoader.classList.add('d-flex');
-          }
+        const newLoader = document.getElementById('chatLoader');
+        if (newLoader) {
+          newLoader.classList.remove('d-none');
+          newLoader.classList.add('d-flex');
+        }
 
-          const chatBackBtn = document.querySelector('.chatBackBtn');
-          chatBackBtn.addEventListener('click', () => {
-            chatSection.style.display = 'none';
-            contactList.classList.remove('d-none');
-          });
+        const chatBackBtn = document.querySelector('.chatBackBtn');
+        chatBackBtn.addEventListener('click', () => {
+          chatSection.style.display = 'none';
+          contactList.classList.remove('d-none');
+          closeChat();
+        });
 
-          // Hide loader after 2 seconds
-          setTimeout(() => {
-            const newLoader = document.getElementById('chatLoader');
-            if (newLoader) newLoader.classList.add('d-none');
-          }, 2000);
-
-        }, 0);
-
+        if (newLoader) newLoader.classList.add('d-none');
       }
     })
     contacts.push(contact);
@@ -540,10 +543,68 @@ function setFriends(...friends) {
 }
 
 
-function sendMessage(event) {
-  console.log('hi', event.target);
+async function sendMessage(event) {
+  const input = document.querySelector('.chat-bar__input');
+  const messageText = input.value.trim();
   
+  if (messageText) {
+    // Get the current chat ID (you need to store this when opening a chat)
+    const currentChatId = chatId; 
+    
+    // Add message to Firestore
+    const messagesRef = collection(db, 'chats', currentChatId, 'messages');
+    await addDoc(messagesRef, {
+      text: messageText,
+      senderId: auth.currentUser.uid,
+      createdAt: serverTimestamp()
+    });
+    
+    input.value = ''; // Clear input
+  }
 }
+
+
+let unsubscribeMessages; // To store the listener function
+
+function openChat(id) {
+  
+  chatId = id;
+  // Clear previous listener if exists
+  if (unsubscribeMessages) unsubscribeMessages();
+  
+  const messagesRef = collection(db, 'chats', id, 'messages');
+  const q = query(messagesRef, orderBy('createdAt'));
+  
+  // Realtime listener
+  unsubscribeMessages = onSnapshot(q, (snapshot) => {
+    const chatDiv = document.getElementById('chat');
+    chatDiv.innerHTML = ''; // Clear previous messages
+    
+    snapshot.forEach((doc) => {
+      const message = doc.data();
+      const isCurrentUser = message.senderId === auth.currentUser.uid;
+      
+      // Simple message display
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${isCurrentUser ? 'right' : 'left'}`;
+      messageDiv.textContent = message.text;
+      
+      chatDiv.appendChild(messageDiv);
+    });
+    
+    // Scroll to bottom
+    chatDiv.scrollTop = chatDiv.scrollHeight;
+  });
+}
+
+
+function closeChat() {
+  if (unsubscribeMessages) {
+    unsubscribeMessages(); // Stop listening
+  }
+}
+
+
 
 
 
