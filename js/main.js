@@ -539,7 +539,6 @@ async function sendMessage(event) {
   const messageText = input.value.trim();
   
   if (messageText) {
-    // Get the current chat ID (you need to store this when opening a chat)
     const currentChatId = chatId; 
     
     // Add message to Firestore
