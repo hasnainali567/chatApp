@@ -42,17 +42,14 @@ onAuthStateChanged(auth, async (user) => {
     if (userDocSnap.exists()) {
       const userData = userDocSnap.data();
       const friendsList = userData.friends || [];
-      let contacts;  // tumhara state update ho gaya
-
+      
       if (friendsList.length > 0) {
-        contacts = setFriends(...friendsList);
+        const contacts = setFriends(...friendsList);
         if (contacts.length > 0) {
           contactListContaner.innerHTML = '';
           contacts.forEach(elem => {
             contactListContaner.prepend(elem)
           })
-        } else {
-          contactListContaner.innerHTML = `<p class="text-light text-center p-4">Plz! Add contact to start Chating</p>`
         }
       }
 
@@ -359,20 +356,7 @@ searchUserBtn.addEventListener('click', async () => {
         })
       });
 
-      const foundUserId = userData.userId;
-      chatId = [currentUser.uid, foundUserId].sort().join("_");
-
-      const chatRef = doc(db, "chats", chatId);
-      const chatSnap = await getDoc(chatRef);
-
-      if (!chatSnap.exists()) {
-        await setDoc(chatRef, {
-          chatId: chatId,
-          users: [currentUser.uid, foundUserId],
-          createdAt: serverTimestamp()
-          // You can also add lastMessage: '', messages: [] etc. as needed
-        });
-      }
+      
 
       showToast(`${userData.name} added to your contacts.`);
 
@@ -413,7 +397,24 @@ function setFriends(...friends) {
     </div>
     <div class="contact-time">8:45 PM</div>`
 
-    contact.addEventListener('click', (e) => {
+    contact.addEventListener('click', async (e) => {
+      
+      const foundUserId = e.currentTarget.getAttribute('data-id');
+      console.log(foundUserId);
+      
+      const currentUser = auth.currentUser;
+      chatId = [currentUser.uid, foundUserId].sort().join("_");
+
+      const chatRef = doc(db, "chats", chatId);
+      const chatSnap = await getDoc(chatRef);
+
+      if (!chatSnap.exists()) {
+        await setDoc(chatRef, {
+          chatId: chatId,
+          users: [currentUser.uid, foundUserId],
+          createdAt: serverTimestamp()
+        });
+      }
       openChat(chatId);
       if (window.innerWidth >= 660) {
         let contactItem = e.currentTarget;
@@ -440,12 +441,7 @@ function setFriends(...friends) {
                 </div>
             </div>
 
-            <div id="chat">
-                <div class="message left">Hello! How can I help you?</div>
-                <div class="message right">Hi! I need information about your services.</div>
-                <div class="message left">Sure! We offer web development and app development courses.</div>
-                <div class="message right">That sounds good. How can I enroll?</div>
-            </div>
+            <div id="chat"></div>
 
             <div class="chat-bar">
                 <input class="chat-bar__input" type="text" placeholder="Message...">
@@ -497,12 +493,7 @@ function setFriends(...friends) {
                 </div>
             </div>
 
-            <div id="chat">
-                <div class="message left">Hello! How can I help you?</div>
-                <div class="message right">Hi! I need information about your services.</div>
-                <div class="message left">Sure! We offer web development and app development courses.</div>
-                <div class="message right">That sounds good. How can I enroll?</div>
-            </div>
+            <div id="chat">1</div>
 
             <div class="chat-bar">
                 <input class="chat-bar__input" type="text" placeholder="Message...">
