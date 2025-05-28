@@ -39,28 +39,22 @@ onAuthStateChanged(auth, async (user) => {
       lastActive: serverTimestamp(),
       isOnline: true
     });
-    const userDocSnap = await getDoc(userDocRef);
-    if (userDocSnap.exists()) {
-      const userData = userDocSnap.data();
-      const friendsList = userData.friends || [];
+    onSnapshot(userDocRef, (doc)=>{
+      const updatedData = doc.data();
 
-      if (friendsList.length > 0) {
-        const contacts = setFriends(...friendsList);
-        if (contacts.length > 0) {
-          contactListContaner.innerHTML = '';
-          contacts.forEach(elem => {
-            contactListContaner.prepend(elem)
-          })
-        }
-      }
-
-    }
-
+      updateContactListUI(updatedData.friends || []);
+    })
     chatLoader.classList.add('d-none');
   } else {
     chatLoader.classList.add('d-none')
   }
 })
+
+function updateContactListUI(friends) {
+  contactListContaner.innerHTML = '';
+  const contacts = setFriends(...friends);
+  contacts.forEach(c => contactListContaner.prepend(c));
+}
 
 
 addUser.addEventListener('click', () => {
@@ -389,7 +383,7 @@ function setFriends(...friends) {
       if (window.innerWidth >= 660) {
         createChat(elem);
       } else {
-        createChatMobile(elem);
+        createChat(elem, true);
       }
     })
     contacts.push(contact);
@@ -431,97 +425,58 @@ function createContactItem(elem) {
   return contact;
 }
 
-function createChat(conatct) {
-  defaultChatScreen.classList.add('d-none');
-  chatSection.style.display = 'flex'
+function createChat(contact, isMobile) {
+  if (!isMobile) {
+    defaultChatScreen.classList.add('d-none');
+    chatSection.style.display = 'flex'
+  } else {
+    chatSection.innerHTML = ``
+    defaultChatScreen.classList.add('d-none');
+    contactList.classList.add('d-none');
+    chatSection.style.display = 'flex';
+  }
   let chat = `
             <div class="chat-header">
-                <img src="${conatct.profileImage}" id="chatDp" alt="User" />
-                <div class="chat-user-info">
-                    <div class="chat-username">${conatct.name}</div>
-                    <div class="chat-status">online</div>
-                </div>
-            </div>
-
-            <div id="chat" class="position-relative">
-              <div id="chatLoader"
-              class="d-flex position-absolute top-0 start-0 w-100 h-100 bg-white justify-content-center align-items-center"
-              style="z-index: 9999;">
-                <div class="text-center">
-                  <div class="spinner-grow text-primary" role="status"></div>
-                  <div class="spinner-grow text-secondary" role="status"></div>
-                  <div class="spinner-grow text-success" role="status"></div>
-                  <p class="mt-3 fw-bold">Loading your chats...</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="chat-bar">
-                <input class="chat-bar__input" type="text" placeholder="Message...">
-                <div class="chat-bar__buttons">
-                    <i class="btn fas fa-paper-plane"></i>
-                </div>
-            </div>`
+      ${isMobile ? `<button class="chatBackBtn"><i class="fa-solid fa-arrow-left"></i></button>` : ''}
+      <img src="${contact.profileImage}" id="chatDp" alt="User" />
+      <div class="chat-user-info">
+        <div class="chat-username">${contact.name}</div>
+        <div class="chat-status">online</div>
+      </div>
+    </div>
+    <div id="chat" class="position-relative">
+      <div id="chatLoader" class="d-flex position-absolute top-0 start-0 w-100 h-100 bg-white justify-content-center align-items-center" style="z-index: 9999;">
+        <div class="text-center">
+          <div class="spinner-grow text-primary" role="status"></div>
+          <div class="spinner-grow text-secondary" role="status"></div>
+          <div class="spinner-grow text-success" role="status"></div>
+          <p class="mt-3 fw-bold">Loading your chats...</p>
+        </div>
+      </div>
+    </div>
+    <div class="chat-bar">
+      <input class="chat-bar__input" type="text" placeholder="Message...">
+      <div class="chat-bar__buttons">
+        <i class="btn fas fa-paper-plane"></i>
+      </div>
+    </div>`;
 
   chatSection.innerHTML = chat;
   const sendBtn = document.querySelector('.fa-paper-plane');
-  console.log(sendBtn);
   sendBtn.addEventListener('click', (e) => {
     sendMessage(e, conatct);
   })
-}
-
-
-function createChatMobile(conatct) {
-  chatSection.innerHTML = ``
-  defaultChatScreen.classList.add('d-none');
-  contactList.classList.add('d-none');
-  chatSection.style.display = 'flex';
-
-  let chat = `
-            <div class="chat-header">
-                <button class="chatBackBtn"><i class="fa-solid fa-arrow-left"></i></button>
-                <img src="${conatct.profileImage}" id="chatDp" alt="User" />
-                <div class="chat-user-info">
-                    <div class="chat-username">${conatct.name}</div>
-                    <div class="chat-status">online</div>
-                </div>
-            </div>
-
-            <div id="chat" class="position-relative">
-              <div id="chatLoader"
-              class="d-flex position-absolute top-0 start-0 w-100 h-100 bg-white justify-content-center align-items-center"
-              style="z-index: 9999;">
-                <div class="text-center">
-                  <div class="spinner-grow text-primary" role="status"></div>
-                  <div class="spinner-grow text-secondary" role="status"></div>
-                  <div class="spinner-grow text-success" role="status"></div>
-                  <p class="mt-3 fw-bold">Loading your chats...</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="chat-bar">
-                <input class="chat-bar__input" type="text" placeholder="Message...">
-                <div class="chat-bar__buttons">
-                    <i class="btn fas fa-paper-plane"></i>
-                </div>
-            </div>`
-
-  chatSection.innerHTML = chat;
-  const sendBtn = document.querySelector('.fa-paper-plane');
-
-  sendBtn.addEventListener('click', (e) => {
-    sendMessage(e);
-  })
 
   const chatBackBtn = document.querySelector('.chatBackBtn');
-  chatBackBtn.addEventListener('click', () => {
+  chatBackBtn && chatBackBtn.addEventListener('click', () => {
     chatSection.style.display = 'none';
     contactList.classList.remove('d-none');
     closeChat();
   });
 }
+
+
+
 
 
 async function sendMessage(event, contact) {
@@ -561,17 +516,10 @@ async function sendMessage(event, contact) {
           friends: arrayUnion({
             uid: auth.currentUser.uid,
             name: senderData.name,
+            email: senderData.email,
             profileImage: senderData.profileImage,
-            chatId: chatId
           })
         });
-
-        const newContact = createContactItem({
-          uid: auth.currentUser.uid,
-          name: senderData.name,
-          profileImage: senderData.profileImage
-        });
-        contactListContaner.prepend(newContact);
       }
     }
 
