@@ -302,9 +302,9 @@ searchEmailInput.addEventListener('input', () => {
 
   if (value.match(emailRegex)) {
     console.log('Valid email');
-    searchUserBtn.removeAttribute('disabled');  // ✅ Enable button
+    searchUserBtn.removeAttribute('disabled');
   } else {
-    searchUserBtn.setAttribute('disabled', 'true'); // ❌ Disable button
+    searchUserBtn.setAttribute('disabled', 'true');
   }
 });
 
@@ -313,7 +313,6 @@ searchUserBtn.addEventListener('click', async () => {
 
   console.log("Searching for:", search);
 
-  // ✅ Firestore query logic here:
   const q = query(
     collection(db, 'users'),
     where("email", "==", search)
@@ -537,7 +536,7 @@ async function sendMessage(event, contact) {
   try {
     const chatRef = doc(db, "chats", chatId);
     const chatSnap = await getDoc(chatRef);
-    
+
     if (!chatSnap.exists()) {
       await setDoc(chatRef, {
         users: [auth.currentUser.uid, contact.uid],
@@ -547,7 +546,7 @@ async function sendMessage(event, contact) {
 
     const recipientRef = doc(db, 'users', contact.uid);
     const recipientSnap = await getDoc(recipientRef);
-    
+
     if (recipientSnap.exists()) {
       const recipientData = recipientSnap.data();
       const hasSenderInContacts = recipientData.friends?.some(
@@ -557,7 +556,7 @@ async function sendMessage(event, contact) {
       if (!hasSenderInContacts) {
         const senderDoc = await getDoc(doc(db, 'users', auth.currentUser.uid));
         const senderData = senderDoc.data();
-        
+
         await updateDoc(recipientRef, {
           friends: arrayUnion({
             uid: auth.currentUser.uid,
@@ -566,6 +565,13 @@ async function sendMessage(event, contact) {
             chatId: chatId
           })
         });
+
+        const newContact = createContactItem({
+          uid: auth.currentUser.uid,
+          name: senderData.name,
+          profileImage: senderData.profileImage
+        });
+        contactListContaner.prepend(newContact);
       }
     }
 
@@ -577,7 +583,7 @@ async function sendMessage(event, contact) {
     });
 
     input.value = '';
-    
+
   } catch (error) {
     console.error("Error sending message:", error);
     showToast("Failed to send message");
