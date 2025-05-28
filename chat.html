@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modern Chat UI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+    <link href="style.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/bootstrap-5.3.6-dist/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/ae99efb87b.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div id="layer" class="d-none"></div>
+    <!-- Fullscreen Loader -->
+    <div id="chatLoader"
+        class="d-flex position-fixed top-0 start-0 w-100 h-100 bg-white justify-content-center align-items-center"
+        style="z-index: 9999;">
+        <div class="text-center">
+            <div class="spinner-grow text-primary" role="status"></div>
+            <div class="spinner-grow text-secondary" role="status"></div>
+            <div class="spinner-grow text-success" role="status"></div>
+            <p class="mt-3 fw-bold">Loading your chats...</p>
+        </div>
+    </div>
+
+    <div class="app-container d-none">
+        <div class="contact-list" id="contactList">
+            <div class="contact-header">
+                <span>Chats</span>
+                <i id="addUser" class="fa-solid fa-plus fs-5 text-primary" style="cursor: pointer;"></i>
+            </div>
+
+
+
+            <div id="contact-list-contaner">
+
+            </div>
+        </div>
+
+        <div class="chat-section" id="chatSection">
+
+            <div id="defaultChatScreen" class="default-chat-screen">
+                <div class="default-chat-content">
+                    <img src="https://img.freepik.com/premium-vector/chat-app-logo-design-template-can-be-used-icon-chat-application-logo_605910-1724.jpg"
+                        class="default-logo" />
+                    <h2>Welcome to MyChat</h2>
+                    <p>Select a contact to start chatting</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-modal-wrapper d-none" id="searchUserModal">
+        <div class="custom-modal p-3">
+            <h2 class="modal-title">Start New Chat</h2>
+            <input type="email" id="searchEmailInput" class="inputs modal-input" placeholder="Enter user's email">
+            <div id="searchError" class="modal-error">User not found.</div>
+            <button id="searchUserBtn" class="modal-btn" disabled>Search</button>
+            <i id="closeAddUser" class="fa-solid fa-xmark modal-close"></i>
+        </div>
+    </div>
+
+
+
+
+    <script type="module" src="/js/chat.js"></script>
+    <script src="/bootstrap-5.3.6-dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
