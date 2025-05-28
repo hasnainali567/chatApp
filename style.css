@@ -17,11 +17,20 @@ body {
   background-color: var(--gray);
   color: var(--light);
   height: 100vh;
+  width: 100vw;
+}
+
+#layer {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  background-color: #0f1c2047;
+  z-index: 10000;
 }
 
 .app-container {
   display: flex;
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
 }
 

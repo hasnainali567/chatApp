@@ -12,7 +12,7 @@
 </head>
 
 <body>
-
+    <div id="layer" class="d-none"></div>
     <!-- Fullscreen Loader -->
     <div id="chatLoader"
         class="d-flex position-fixed top-0 start-0 w-100 h-100 bg-white justify-content-center align-items-center"
@@ -91,7 +91,7 @@
             </div>
         </div>
 
-        <div class="chat-section position-relative" id="chatSection">
+        <div class="chat-section" id="chatSection">
 
             <div id="defaultChatScreen" class="default-chat-screen">
                 <div class="default-chat-content">
@@ -101,19 +101,6 @@
                     <p>Select a contact to start chatting</p>
                 </div>
             </div>
-
-            <div id="chatLoader"
-                class="chat-chatLoader d-none position-absolute top-0 start-0 w-100 h-100 bg-white justify-content-center align-items-center"
-                style="z-index: 9999;">
-                <div class="text-center">
-                    <div class="spinner-grow text-primary" role="status"></div>
-                    <div class="spinner-grow text-secondary" role="status"></div>
-                    <div class="spinner-grow text-success" role="status"></div>
-                    <p class="mt-3 fw-bold">Loading your chats...</p>
-                </div>
-            </div>
-
-            
         </div>
     </div>
 
