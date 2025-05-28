@@ -10,11 +10,11 @@ const addUser = document.getElementById('addUser');
 const closeAddUser = document.getElementById('closeAddUser');
 const searchUserBtn = document.getElementById('searchUserBtn');
 const contactListContaner = document.getElementById('contact-list-contaner');
+const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 let chatId = '';
 
 onAuthStateChanged(auth, async (user) => {
     if (user) {
-        appContainer.classList.remove('d-none');
         const userDocRef = doc(db, "users", user.uid);
         await updateDoc(userDocRef, {
             lastActive: serverTimestamp(),
@@ -27,6 +27,7 @@ onAuthStateChanged(auth, async (user) => {
         chatLoader.classList.add('d-none');
     } else {
         chatLoader.classList.add('d-none')
+        window.location = 'index.html'
     }
 })
 
@@ -137,15 +138,7 @@ searchUserBtn.addEventListener('click', async () => {
                 })
             });
             showToast(`${userData.name} added to your contacts.`);
-
-            // Optionally: update UI immediately with new contact
-            const contactElem = setFriends(userData);
-            if (Array.isArray(contactElem)) {
-                contactElem.forEach(elem => contactListContaner.prepend(elem));
-            } else if (contactElem) {
-                contactListContaner.prepend(contactElem);
-            }
-
+            
             // clear input
             searchEmailInput.value = '';
             searchUserBtn.disabled = true;
@@ -179,10 +172,6 @@ function setFriends(...friends) {
     })
     return contacts;
 }
-
-// window.addEventListener('resize', ()=>{
-//     if(window)
-// })
 
 
 

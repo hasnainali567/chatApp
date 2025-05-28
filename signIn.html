@@ -28,39 +28,7 @@
 
     <div class="register-container-wrapper">
         <div class="register-container p-3">
-            <div class="register-box sign-up">
-                <h2 class="headings mb-3">Register</h2>
-                <div id="profilePic" class="d-flex flex-column align-items-center">
-                    <img id="ProfileImg"
-                        src="https://img.freepik.com/premium-vector/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission-sign-business-concept_157943-15752.jpg?semt=ais_hybrid&w=740"
-
-                        class="" alt="...">
-                    <div class="mt-3">
-                        <label for="profile-upload" class="plus-icon-label">
-                            <i class="fa-solid fa-plus"></i>
-                        </label>
-                        <input type="file" id="profile-upload" class="custom-file-input" accept="image/*" />
-                    </div>
-                </div>
-                <form>
-                    <label for="name">Name</label>
-                    <input type="text" id="nameInp" class="inputs mb-2" minlength="3" name="name"
-                        placeholder="e.g Hasnain" />
-                    <label for="email">Email</label>
-                    <input type="tel" id="signUpEmailInp" class="inputs mb-1" name="email"
-                        placeholder="e.g example@mail.com" />
-                    <span class="emailValidate mb-2 text-danger"></span>
-                    <label for="pass">Password</label>
-                    <input type="password" id="signUpPasswordInp" class="inputs mb-1" name="pass"
-                        placeholder="atleat 8 character" minlength="8" />
-                    <span class="passValidate mb-2 text-danger"></span>
-                    <span class="text-light mb-2">already have an account ? <a href="/signIn.html"
-                            class="signInShow text-primary text-decoration-none text-nowrap">Sign In</a></span>
-                    <button type="submit" id="signUpBtn" class="rounded" disabled>Continue</button>
-                </form>
-            </div>
-
-            <div class="register-box sign-in d-none">
+            <div class="register-box sign-in">
                 <h2 class="headings">Sign In</h2>
                 <form>
                     <label for="email">Email</label>
@@ -71,7 +39,7 @@
                     <input type="password" id="signInPasswordInp" class="inputs mb-1" name="pass"
                         placeholder="atleat 8 character" minlength="8" />
                     <span class="passValidate mb-2 text-danger"></span>
-                    <span class="text-light mb-3">don't have an account ? <a href="javascript:void(0)"
+                    <span class="text-light mb-3">don't have an account ? <a href="index.html"
                             class="signUpShow text-primary text-decoration-none text-nowrap">Sign Up</a></span>
                     <button type="submit" id="loginBtn" class="rounded" disabled>Continue</button>
                 </form>

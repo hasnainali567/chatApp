@@ -1,34 +1,18 @@
 import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, setDoc, db, doc, query, where, getDocs, collection, getDoc, updateDoc, arrayUnion, serverTimestamp, orderBy, addDoc, onSnapshot } from "./firebase.js";
 
-const layer = document.getElementById('layer');
 const signUpBtn = document.getElementById('signUpBtn');
 const loginBtn = document.getElementById('loginBtn');
 const signUpEmailInp = document.getElementById('signUpEmailInp');
 const signUpPasswordInp = document.getElementById('signUpPasswordInp');
-const profilePic = document.getElementById('profilePic');
 const ProfileImg = document.getElementById('ProfileImg');
 const profileUpload = document.getElementById('profile-upload');
 const signInEmailInp = document.getElementById('signInEmailInp');
 const signInPasswordInp = document.getElementById('signInPasswordInp');
-const searchEmailInput = document.getElementById('searchEmailInput');
-const contactItems = document.querySelectorAll('.contact-item');
 const chatLoader = document.getElementById('chatLoader');
 const appContainer = document.querySelector('.app-container');
 const registerContainerWrapper = document.querySelector('.register-container-wrapper');
-const signUp = document.querySelector('.sign-up');
-const signIn = document.querySelector('.sign-in');
 const emailValidate = document.querySelector('.emailValidate');
 const passValidate = document.querySelector('.passValidate');
-const imageSelect = document.querySelector('.image-select');
-const signUpShow = document.querySelector('.signUpShow');
-const signInShow = document.querySelector('.signInShow');
-const contactList = document.getElementById('contactList');
-const chatSection = document.getElementById('chatSection');
-const addUser = document.getElementById('addUser');
-const closeAddUser = document.getElementById('closeAddUser');
-const searchUserBtn = document.getElementById('searchUserBtn');
-const contactListContaner = document.getElementById('contact-list-contaner');
-let chatId = '';
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
@@ -39,7 +23,7 @@ onAuthStateChanged(auth, async (user) => {
 })
 
 
-profileUpload.addEventListener('change', (e) => {
+profileUpload && profileUpload.addEventListener('change', (e) => {
   let file = profileUpload.files[0];
 
   if (file) {
@@ -57,6 +41,7 @@ profileUpload.addEventListener('change', (e) => {
 
 
 const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+
 const passRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
 
 function validateInputs() {
@@ -88,11 +73,11 @@ function validateInputs() {
   signUpBtn.disabled = !(isEmailValid && isPassValid);
 }
 
-signUpEmailInp.addEventListener('input', validateInputs);
-signUpPasswordInp.addEventListener('input', validateInputs);
+signUpEmailInp && signUpEmailInp.addEventListener('input', validateInputs);
+signUpPasswordInp && signUpPasswordInp.addEventListener('input', validateInputs);
 
 
-signUpBtn.addEventListener('click', async (e) => {
+signUpBtn && signUpBtn.addEventListener('click', async (e) => {
   e.preventDefault();
 
   signUpBtn.innerHTML = `
@@ -221,6 +206,8 @@ loginBtn.addEventListener('click', async (e) => {
     registerContainerWrapper.classList.add('d-none')
     appContainer.classList.remove('d-none');
     chatLoader.classList.add('d-none')
+
+    window.location = '/chat.html'
   } catch (error) {
     console.log(error.message);
 
