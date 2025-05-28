@@ -464,7 +464,7 @@ function createChat(contact, isMobile) {
   chatSection.innerHTML = chat;
   const sendBtn = document.querySelector('.fa-paper-plane');
   sendBtn.addEventListener('click', (e) => {
-    sendMessage(e, conatct);
+    sendMessage(e, contact);
   })
 
   const chatBackBtn = document.querySelector('.chatBackBtn');
