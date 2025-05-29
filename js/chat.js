@@ -138,7 +138,7 @@ searchUserBtn.addEventListener('click', async () => {
                 })
             });
             showToast(`${userData.name} added to your contacts.`);
-            
+
             // clear input
             searchEmailInput.value = '';
             searchUserBtn.disabled = true;
@@ -148,6 +148,44 @@ searchUserBtn.addEventListener('click', async () => {
         showToast("Something went wrong while searching.");
     }
 });
+
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => {
+    if (window.innerWidth >= 660) {
+        if (chatSection.style.display === 'none') {
+            chatSection.style.display = 'flex'
+        }
+    }
+    const chatHeader = document.querySelector('.chat-header');
+
+    if (window.innerWidth <= 660) {
+
+
+        if (chatSection.style.display === 'flex' && contactList.className.indexOf('d-none') === -1) {
+            contactList.classList.add('d-none')
+            const backBtn = document.createElement('button');
+            backBtn.classList.add('chatBackBtn');
+            backBtn.innerHTML = `<i class="fa-solid fa-arrow-left"></i>`
+
+            backBtn.addEventListener('click', closeChatDiv);
+            chatHeader.prepend(backBtn)
+
+
+        }
+    } else {
+        const backBtn =  chatHeader?.querySelector('.chatBackBtn');
+        backBtn && backBtn.remove()
+        contactList.classList.remove('d-none')
+    }
+  }, 150);
+});
+
+
+window.addEventListener('resize', () => {
+    
+})
 
 const defaultChatScreen = document.getElementById('defaultChatScreen');
 function setFriends(...friends) {
@@ -246,16 +284,18 @@ function createChat(contact, isMobile) {
     const sendBtn = document.querySelector('.fa-paper-plane');
     sendBtn.addEventListener('click', async (e) => {
         sendMessage(e, contact);
-  })
+    })
 
     const chatBackBtn = document.querySelector('.chatBackBtn');
-    chatBackBtn && chatBackBtn.addEventListener('click', () => {
-        chatSection.style.display = 'none';
-        contactList.classList.remove('d-none');
-        closeChat();
-    });
+    chatBackBtn && chatBackBtn.addEventListener('click', closeChatDiv);
 }
 
+
+function closeChatDiv() {
+    chatSection.style.display = 'none';
+    contactList.classList.remove('d-none');
+    closeChat();
+}
 
 
 
