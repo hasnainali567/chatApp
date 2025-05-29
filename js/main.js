@@ -126,7 +126,7 @@ signUpBtn && signUpBtn.addEventListener('click', async (e) => {
         name: name.value,
         email,
         userId,
-        profileImage: "https://img.freepik.com/premium-vector/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission-sign-business-concept_157943-15752.jpg?semt=ais_hybrid&w=740"
+        profileImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTdmrjoiXGVFEcd1cX9Arb1itXTr2u8EKNpw&s'
       });
 
       signUpBtn.innerHTML = `Sign Up`;

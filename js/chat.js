@@ -9,9 +9,11 @@ const chatSection = document.getElementById('chatSection');
 const addUser = document.getElementById('addUser');
 const closeAddUser = document.getElementById('closeAddUser');
 const searchUserBtn = document.getElementById('searchUserBtn');
+const headerUserName = document.getElementById('headerUserName');
 const contactListContaner = document.getElementById('contact-list-contaner');
 const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 let chatId = '';
+let isFirstTime = true;
 
 onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -22,6 +24,11 @@ onAuthStateChanged(auth, async (user) => {
         });
         onSnapshot(userDocRef, (doc) => {
             const updatedData = doc.data();
+            
+            if (isFirstTime) {
+                headerUserName.innerText = `${updatedData.name}`
+                isFirstTime = false;
+            }
             updateContactListUI(updatedData.friends || []);
         })
         chatLoader.classList.add('d-none');
@@ -31,7 +38,9 @@ onAuthStateChanged(auth, async (user) => {
     }
 })
 
+
 function updateContactListUI(friends) {
+
     contactListContaner.innerHTML = '';
     const contacts = setFriends(...friends);
     contacts.forEach(c => contactListContaner.prepend(c));
@@ -128,7 +137,6 @@ searchUserBtn.addEventListener('click', async () => {
                 return;
             }
 
-            // ✅ Add the user to current user's friends list
             await updateDoc(currentUserDocRef, {
                 friends: arrayUnion({
                     name: userData.name,
@@ -151,8 +159,14 @@ searchUserBtn.addEventListener('click', async () => {
 
 let resizeTimeout;
 window.addEventListener('resize', () => {
-  clearTimeout(resizeTimeout);
-  resizeTimeout = setTimeout(() => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+
+    }, 150);
+});
+
+
+window.addEventListener('resize', () => {
     if (window.innerWidth >= 660) {
         if (chatSection.style.display === 'none') {
             chatSection.style.display = 'flex'
@@ -161,8 +175,6 @@ window.addEventListener('resize', () => {
     const chatHeader = document.querySelector('.chat-header');
 
     if (window.innerWidth <= 660) {
-
-
         if (chatSection.style.display === 'flex' && contactList.className.indexOf('d-none') === -1) {
             contactList.classList.add('d-none')
             const backBtn = document.createElement('button');
@@ -175,16 +187,10 @@ window.addEventListener('resize', () => {
 
         }
     } else {
-        const backBtn =  chatHeader?.querySelector('.chatBackBtn');
+        const backBtn = chatHeader?.querySelector('.chatBackBtn');
         backBtn && backBtn.remove()
         contactList.classList.remove('d-none')
     }
-  }, 150);
-});
-
-
-window.addEventListener('resize', () => {
-    
 })
 
 const defaultChatScreen = document.getElementById('defaultChatScreen');
@@ -234,10 +240,12 @@ function createContactItem(elem) {
     const contact = document.createElement('div');
     contact.classList.add('contact-item')
     contact.setAttribute('data-id', elem.uid)
-    contact.innerHTML = `<img src="${elem.profileImage}" class="contact-avatar" />
+    contact.innerHTML = `<div class="contact-avatar">
+                            <img src="${elem.profileImage}" />
+                         </div>
                          <div class="contact-info">
                             <div class="contact-name">${elem.name}</div>
-                            <div class="contact-message">Hey! there i am using whatsapp</div>
+                            <div class="contact-message">Hey! there i am using whatsapp now what yo think</div>
                          </div>
                          <div class="contact-time">8:45 PM</div>`
 
@@ -262,6 +270,9 @@ function createChat(contact, isMobile) {
         <div class="chat-username">${contact.name}</div>
         <div class="chat-status">online</div>
       </div>
+      <div>
+        <i class="fa-solid fa-trash"></i>
+      </div>
     </div>
     <div id="chat" class="position-relative">
       <div id="chatLoader" class="d-flex position-absolute top-0 start-0 w-100 h-100 bg-white justify-content-center align-items-center" style="z-index: 9999;">
@@ -276,7 +287,7 @@ function createChat(contact, isMobile) {
     <div class="chat-bar">
       <input class="chat-bar__input" type="text" placeholder="Message...">
       <div class="chat-bar__buttons">
-        <i class="btn fas fa-paper-plane"></i>
+        <i class="fas fa-paper-plane"></i>
       </div>
     </div>`;
 
