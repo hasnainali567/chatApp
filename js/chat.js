@@ -291,8 +291,16 @@ function createChat(contact, isMobile) {
       </div>
     </div>`;
 
+    
+
     chatSection.innerHTML = chat;
+    const input = document.querySelector('.chat-bar__input');
     const sendBtn = document.querySelector('.fa-paper-plane');
+    input.addEventListener('keydown', (key)=>{
+        if (key.keyCode === 13) {
+            sendBtn.click();
+        }
+    })
     sendBtn.addEventListener('click', async (e) => {
         sendMessage(e, contact);
     })
@@ -300,6 +308,7 @@ function createChat(contact, isMobile) {
     const chatBackBtn = document.querySelector('.chatBackBtn');
     chatBackBtn && chatBackBtn.addEventListener('click', closeChatDiv);
 }
+
 
 
 function closeChatDiv() {
