@@ -16,7 +16,12 @@ const passValidate = document.querySelector('.passValidate');
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
-    window.location = '/chat.html'
+    const userDocRef = doc(db, "users", user.uid);
+    let userDocSnap = await getDoc(userDocRef);
+    if (userDocSnap.exists()) {
+      window.location.href = '/chat.html'
+    }
+    // window.location = '/chat.html'
   } else {
     chatLoader.classList.add('d-none')
   }
@@ -110,14 +115,20 @@ signUpBtn && signUpBtn.addEventListener('click', async (e) => {
           });
 
           signUpBtn.innerHTML = `Sign Up`;
-          window.location = `/chat.html`
+
+          chatLoader.classList.remove('d-none')
+          console.log('running...');
+          setTimeout(() => {
+            window.location = '/chat.html'
+          }, 500)
+
         } catch (error) {
           handleSignupError(error);
         }
       };
       reader.readAsDataURL(file);
 
-      
+
     } else {
       let userCredential = await createUserWithEmailAndPassword(auth, email, pass);
       let userId = userCredential.user.uid;
@@ -126,11 +137,18 @@ signUpBtn && signUpBtn.addEventListener('click', async (e) => {
         name: name.value,
         email,
         userId,
-        profileImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTdmrjoiXGVFEcd1cX9Arb1itXTr2u8EKNpw&s'
+        profileImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTdmrjoiXGVFEcd1cX9Arb1itXTr2u8EKNpw&s",
       });
 
       signUpBtn.innerHTML = `Sign Up`;
-      window.location = '/chat.html'
+
+      chatLoader.classList.remove('d-none')
+      console.log('running...');
+      
+      setTimeout(() => {
+        window.location = '/chat.html'
+      }, 500)
+
     }
   } catch (error) {
     handleSignupError(error);

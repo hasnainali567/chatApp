@@ -310,14 +310,13 @@ body {
   justify-content: center;
   width: 100%;
   height: 100%;
-  background-color: #191C23;
+  background-color: var(--purple);
   backdrop-filter: blur(50px);
 }
 
 
 .register-container {
-
-  background-color: var(--dark);
+  background-color: white;
   padding: 2em;
   border-radius: 15px;
   width: 90%;
@@ -327,8 +326,10 @@ body {
 
 .headings {
   text-align: center;
+  font-weight: 600;
+  text-transform: uppercase;
   margin-bottom: 1em;
-  color: var(--light);
+  color: var(--purple);
 }
 
 form {
@@ -338,15 +339,16 @@ form {
 
 label {
   margin-bottom: 0.5em;
-  color: #bfbfbf;
+  color: var(--icon-color);
 }
 
 .inputs {
   padding: 0.75em 1em;
-  border-radius: 8px;
+  border-radius: 80px;
   border: none;
-  background-color: var(--accent);
-  color: var(--light);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  background-color: white;
+  color: #333;
 }
 
 
@@ -356,30 +358,38 @@ label {
 
 .inputs:focus {
   outline: none;
-  border: 1px solid #6DC8C6;
+  border: 1px solid #333;
 }
 
+
+.signInShow,
+.signUpShow {
+  color: #444444 !important;
+}
 
 .register-box button,
 #searchUserBtn {
   padding: 0.75em;
-  background-color: #6DC8C6;
-  color: var(--dark);
+  background-color: var(--purple);
+  color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 80px !important;
   font-weight: bold;
   cursor: pointer;
   transition: background 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .register-box button:hover,
 #searchUserBtn:hover {
-  background-color: #58b3af;
+  background-color: var(--icon-color);
 }
 
 .register-box button:disabled,
 #searchUserBtn:disabled {
-  background-color: #346770;
+  background-color: #7B70EE;
+  color: #ccc;
+  cursor: not-allowed;
 }
 
 #profilePic {
@@ -417,7 +427,7 @@ label {
   right: 35%;
   bottom: 7%;
   padding: 10px 11px;
-  background-color: #1F484F;
+  background-color: var(--purple);
   /* WhatsApp green */
   border-radius: 50%;
   display: flex;
@@ -431,7 +441,7 @@ label {
 }
 
 .plus-icon-label:hover {
-  background-color: #346770;
+  background-color: #7B70EE;
 }
 
 .custom-modal-wrapper {
