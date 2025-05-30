@@ -24,14 +24,13 @@ onAuthStateChanged(auth, async (user) => {
         });
         onSnapshot(userDocRef, (doc) => {
             const updatedData = doc.data();
-            
+
             if (isFirstTime) {
                 headerUserName.innerText = `${updatedData.name}`
                 isFirstTime = false;
             }
             updateContactListUI(updatedData.friends || []);
         })
-        chatLoader.classList.add('d-none');
     } else {
         chatLoader.classList.add('d-none')
         window.location = 'index.html'
@@ -40,7 +39,7 @@ onAuthStateChanged(auth, async (user) => {
 
 
 function updateContactListUI(friends) {
-
+    chatLoader.classList.add('d-none');
     contactListContaner.innerHTML = '';
     const contacts = setFriends(...friends);
     contacts.forEach(c => contactListContaner.prepend(c));
@@ -59,6 +58,8 @@ closeAddUser.addEventListener('click', () => {
 
 
 function showToast(message) {
+    console.log(message);
+    
     const toastContainer = document.createElement('div');
     toastContainer.className = 'toast align-items-center show position-fixed';
     toastContainer.setAttribute('role', 'alert');
@@ -291,12 +292,12 @@ function createChat(contact, isMobile) {
       </div>
     </div>`;
 
-    
+
 
     chatSection.innerHTML = chat;
     const input = document.querySelector('.chat-bar__input');
     const sendBtn = document.querySelector('.fa-paper-plane');
-    input.addEventListener('keydown', (key)=>{
+    input.addEventListener('keydown', (key) => {
         if (key.keyCode === 13) {
             sendBtn.click();
         }

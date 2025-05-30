@@ -243,6 +243,7 @@ loginBtn.addEventListener('click', async (e) => {
 
 
 function showToast(message) {
+  console.log(message);
   const toastContainer = document.createElement('div');
   toastContainer.className = 'toast align-items-center show position-fixed';
   toastContainer.setAttribute('role', 'alert');
