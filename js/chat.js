@@ -332,7 +332,15 @@ async function deleteContacts(contact) {
 
     try {
         chatLoader.classList.remove('d-none')
-
+        chatSection.innerHTML = `<div id="defaultChatScreen" class="default-chat-screen">
+                <div class="default-chat-content">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWmmXzSj67H9wDnOs1DRbop5TI1mLkLCJ1QQ&s"
+                        class="default-logo" />
+                    <h2>Welcome to MyChat</h2>
+                    <p>Select a contact to start chatting</p>
+                </div>
+            </div>`;
+            
         await deleteMessagesSubcollection(chatId);
 
         const chatRef = doc(db, "chats", chatId); // ✅ FIXED: use doc() not collection()
@@ -349,14 +357,7 @@ async function deleteContacts(contact) {
 
         showToast("Contact and chat deleted successfully.");
 
-        chatSection.innerHTML = `<div id="defaultChatScreen" class="default-chat-screen">
-                <div class="default-chat-content">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWmmXzSj67H9wDnOs1DRbop5TI1mLkLCJ1QQ&s"
-                        class="default-logo" />
-                    <h2>Welcome to MyChat</h2>
-                    <p>Select a contact to start chatting</p>
-                </div>
-            </div>`
+
 
         chatLoader.classList.add('d-none')
 
