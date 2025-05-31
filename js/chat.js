@@ -1,4 +1,4 @@
-import { auth, onAuthStateChanged, setDoc, db, doc, query, where, getDocs, collection, getDoc, updateDoc, arrayUnion, serverTimestamp, orderBy, addDoc, onSnapshot, arrayRemove, deleteDoc } from "./firebase.js";
+import { auth, onAuthStateChanged, setDoc, db, doc, query, where, getDocs, collection, getDoc, updateDoc, arrayUnion, serverTimestamp, orderBy, addDoc, onSnapshot, arrayRemove, deleteDoc, limit } from "./firebase.js";
 
 const layer = document.getElementById('layer');
 const searchEmailInput = document.getElementById('searchEmailInput');
@@ -199,11 +199,18 @@ function setFriends(...friends) {
 
     friends.forEach(elem => {
         let contact = createContactItem(elem);
+        let chatIds = [auth.currentUser.uid, elem.uid].sort().join("_");
+
+        loadLastMessage(chatIds, elem.uid)
+        console.log('chatIds, ' + chatIds);
+
 
         contact.addEventListener('click', async (e) => {
-            layer.classList.remove('d-none')
+
             createChatId(e);
-            openChat(chatId);
+            console.log(chatId === chatIds);
+            console.log(chatId);
+            openChat(chatId, e);
             if (window.innerWidth >= 660) {
                 createChat(elem);
             } else {
@@ -249,6 +256,45 @@ function createContactItem(elem) {
                          <div class="contact-time">8:45 PM</div>`
 
     return contact;
+}
+
+
+async function loadLastMessage(chatId, contactId) {
+    const messagesRef = collection(db, 'chats', chatId, 'messages');
+    const q = query(messagesRef, orderBy('createdAt', 'desc'), limit(1)); // Get latest 1 message
+
+    try {
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+            const doc = querySnapshot.docs[0];
+            const data = doc.data();
+
+            console.log(data);
+
+            // Update UI: Find the correct DOM nodes for this contact
+
+            updateTime(data, contactId)
+
+        }
+    } catch (error) {
+        console.error('Error loading last message:', error);
+    }
+}
+
+function updateTime(data, contactId) {
+    let dateText = '...';
+    if (data.createdAt?.toDate) {
+        const date = data.createdAt.toDate();
+        const options = { hour: 'numeric', minute: 'numeric', hour12: true };
+        dateText = date.toLocaleString('en-US', options);
+    }
+
+    const contactElement = document.querySelector(`[data-id="${contactId}"]`);
+    const messageDiv = contactElement.querySelector('.contact-message');
+    const timeDiv = contactElement.querySelector('.contact-time');
+
+    if (messageDiv) messageDiv.textContent = data.text;
+    if (timeDiv) timeDiv.textContent = dateText;
 }
 
 function createChat(contact, isMobile) {
@@ -441,8 +487,9 @@ async function sendMessage(event, contact) {
 
 let unsubscribeMessages; // To store the listener function
 
-function openChat(id) {
-
+function openChat(id, elem) {
+    elem = elem.currentTarget;
+    
     chatId = id;
     if (unsubscribeMessages) unsubscribeMessages();
 
@@ -470,6 +517,10 @@ function openChat(id) {
                 dateText = 'Sending...'; // Or leave blank if you prefer
             }
 
+            const contactMessage = elem.querySelector('.contact-message');
+            contactMessage.textContent = `${message.text}`
+            const contactTime = elem.querySelector('.contact-time');
+            contactTime.textContent = `${dateText}`
             const messageDiv = document.createElement('div');
             const messageTimeDiv = document.createElement('div');
             messageTimeDiv.className = `messageTime`
