@@ -220,11 +220,21 @@ body {
 .messageTime {
   position: absolute;
   bottom: 0;
-  right: 0%;
+  word-wrap: nowrap;
+  min-width: 80px;
   transform: translateY(120%);
   color: rgb(197, 197, 197);
   font-size: .8rem !important;
   font-weight: 300;
+}
+
+.left > .messageTime {
+  left: 0;
+}
+
+.right > .messageTime {
+  text-align: end;
+  right: 0;
 }
 
 .chat-bar {
