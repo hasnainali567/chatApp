@@ -251,9 +251,9 @@ function createContactItem(elem) {
                          </div>
                          <div class="contact-info">
                             <div class="contact-name">${elem.name}</div>
-                            <div class="contact-message">Hey! there i am using whatsapp now what yo think</div>
+                            <div class="contact-message">Hey! there i am using chatApp</div>
                          </div>
-                         <div class="contact-time">8:45 PM</div>`
+                         <div class="contact-time"></div>`
 
     return contact;
 }
