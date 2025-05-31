@@ -21,16 +21,12 @@ body {
   color: var(--light);
   height: 100vh;
   width: 100vw;
-  overflow: hidden !important;
 }
-
-
 
 .app-container {
   display: flex;
   height: 100%;
   width: 100%;
-  overflow: hidden;
 }
 
 .contact-list {
@@ -241,13 +237,13 @@ body {
   display: flex;
   align-items: center;
   padding: 0.8em 1em;
-  padding-bottom: env(safe-area-inset-bottom);
   background: var(--purple);
   border-top-left-radius: 1em;
   border-top-right-radius: 1em;
 }
 
 .chat-bar__input {
+  padding-bottom: env(safe-area-inset-bottom);
   flex: 1;
   border: none;
   border-radius: 50px;
