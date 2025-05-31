@@ -192,6 +192,9 @@ body {
   padding: 0.5em .95em;
   border-radius: 18px;
   max-width: 70%;
+  min-height: 36.48px;
+  height: auto;
+  max-height: max-content;
   font-size: 0.95em;
   line-height: 1.4;
   position: relative;

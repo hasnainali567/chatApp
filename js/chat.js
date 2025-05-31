@@ -340,7 +340,7 @@ async function deleteContacts(contact) {
                     <p>Select a contact to start chatting</p>
                 </div>
             </div>`;
-            
+
         await deleteMessagesSubcollection(chatId);
 
         const chatRef = doc(db, "chats", chatId); // ✅ FIXED: use doc() not collection()
@@ -451,24 +451,29 @@ function openChat(id) {
 
     unsubscribeMessages = onSnapshot(q, (snapshot) => {
         const chatDiv = document.getElementById('chat');
-        chatDiv.innerHTML = '';
+        chatDiv && (chatDiv.innerHTML = '');
 
         snapshot.forEach((doc) => {
             const message = doc.data();
             const isCurrentUser = message.senderId === auth.currentUser.uid;
 
-            let date = message.createdAt.toDate();
-            const options = {
-                hour: 'numeric',
-                minute: 'numeric',
-                hour12: true,
-            };
-            date = date.toLocaleString('en-US', options);
+            let dateText = '...';
+            if (message.createdAt?.toDate) {
+                const date = message.createdAt.toDate();
+                const options = {
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: true,
+                };
+                dateText = date.toLocaleString('en-US', options);
+            } else {
+                dateText = 'Sending...'; // Or leave blank if you prefer
+            }
 
             const messageDiv = document.createElement('div');
             const messageTimeDiv = document.createElement('div');
             messageTimeDiv.className = `messageTime`
-            messageTimeDiv.textContent = `${date}`
+            messageTimeDiv.textContent = `${dateText}`
             messageDiv.className = `message ${isCurrentUser ? 'right' : 'left'}`;
             messageDiv.textContent = message.text;
             messageDiv.appendChild(messageTimeDiv)
