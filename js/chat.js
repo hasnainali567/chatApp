@@ -1,4 +1,4 @@
-import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, setDoc, db, doc, query, where, getDocs, collection, getDoc, updateDoc, arrayUnion, serverTimestamp, orderBy, addDoc, onSnapshot } from "./firebase.js";
+import { auth, onAuthStateChanged, setDoc, db, doc, query, where, getDocs, collection, getDoc, updateDoc, arrayUnion, serverTimestamp, orderBy, addDoc, onSnapshot, arrayRemove, deleteDoc } from "./firebase.js";
 
 const layer = document.getElementById('layer');
 const searchEmailInput = document.getElementById('searchEmailInput');
@@ -58,8 +58,6 @@ closeAddUser.addEventListener('click', () => {
 
 
 function showToast(message) {
-    console.log(message);
-    
     const toastContainer = document.createElement('div');
     toastContainer.className = 'toast align-items-center show position-fixed';
     toastContainer.setAttribute('role', 'alert');
@@ -272,7 +270,7 @@ function createChat(contact, isMobile) {
         <div class="chat-status">online</div>
       </div>
       <div>
-        <i class="fa-solid fa-trash"></i>
+        <i id="deleteContact" class="fa-solid fa-trash"></i>
       </div>
     </div>
     <div id="chat" class="position-relative">
@@ -297,6 +295,11 @@ function createChat(contact, isMobile) {
     chatSection.innerHTML = chat;
     const input = document.querySelector('.chat-bar__input');
     const sendBtn = document.querySelector('.fa-paper-plane');
+    const deleteContact = document.getElementById('deleteContact');
+
+    deleteContact.addEventListener('click', () => {
+        deleteContacts(contact);
+    })
     input.addEventListener('keydown', (key) => {
         if (key.keyCode === 13) {
             sendBtn.click();
@@ -310,6 +313,58 @@ function createChat(contact, isMobile) {
     chatBackBtn && chatBackBtn.addEventListener('click', closeChatDiv);
 }
 
+
+async function deleteMessagesSubcollection(chatId) {
+    const messagesRef = collection(db, "chats", chatId, "messages");
+    const messagesSnapshot = await getDocs(messagesRef);
+
+    const deletePromises = messagesSnapshot.docs.map((docSnap) =>
+        deleteDoc(docSnap.ref)
+    );
+
+    await Promise.all(deletePromises);
+}
+
+// Step 2: Delete chat and remove friend
+async function deleteContacts(contact) {
+    const currentUser = auth.currentUser;
+    const currentUserRef = doc(db, "users", currentUser.uid);
+
+    try {
+        chatLoader.classList.remove('d-none')
+
+        await deleteMessagesSubcollection(chatId);
+
+        const chatRef = doc(db, "chats", chatId); // ✅ FIXED: use doc() not collection()
+        await deleteDoc(chatRef);
+
+        await updateDoc(currentUserRef, {
+            friends: arrayRemove({
+                name: contact.name,
+                email: contact.email,
+                profileImage: contact.profileImage,
+                uid: contact.uid,
+            }),
+        });
+
+        showToast("Contact and chat deleted successfully.");
+
+        chatSection.innerHTML = `<div id="defaultChatScreen" class="default-chat-screen">
+                <div class="default-chat-content">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWmmXzSj67H9wDnOs1DRbop5TI1mLkLCJ1QQ&s"
+                        class="default-logo" />
+                    <h2>Welcome to MyChat</h2>
+                    <p>Select a contact to start chatting</p>
+                </div>
+            </div>`
+
+        chatLoader.classList.add('d-none')
+
+    } catch (error) {
+        console.log(error);
+        showToast(error.message);
+    }
+}
 
 
 function closeChatDiv() {
@@ -341,6 +396,13 @@ async function sendMessage(event, contact) {
             });
         }
 
+        const messagesRef = collection(db, 'chats', chatId, 'messages');
+        await addDoc(messagesRef, {
+            text: messageText,
+            senderId: auth.currentUser.uid,
+            createdAt: serverTimestamp()
+        });
+
         const recipientRef = doc(db, 'users', contact.uid);
         const recipientSnap = await getDoc(recipientRef);
 
@@ -365,12 +427,7 @@ async function sendMessage(event, contact) {
             }
         }
 
-        const messagesRef = collection(db, 'chats', chatId, 'messages');
-        await addDoc(messagesRef, {
-            text: messageText,
-            senderId: auth.currentUser.uid,
-            createdAt: serverTimestamp()
-        });
+
 
         input.value = '';
 
@@ -399,9 +456,21 @@ function openChat(id) {
             const message = doc.data();
             const isCurrentUser = message.senderId === auth.currentUser.uid;
 
+            let date = message.createdAt.toDate();
+            const options = {
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true,
+            };
+            date = date.toLocaleString('en-US', options);
+
             const messageDiv = document.createElement('div');
+            const messageTimeDiv = document.createElement('div');
+            messageTimeDiv.className = `messageTime`
+            messageTimeDiv.textContent = `${date}`
             messageDiv.className = `message ${isCurrentUser ? 'right' : 'left'}`;
             messageDiv.textContent = message.text;
+            messageDiv.appendChild(messageTimeDiv)
 
             chatDiv.appendChild(messageDiv);
         });
