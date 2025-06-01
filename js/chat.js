@@ -1,6 +1,6 @@
 import { auth, onAuthStateChanged, setDoc, db, doc, query, where, getDocs, collection, getDoc, updateDoc, arrayUnion, serverTimestamp, orderBy, addDoc, onSnapshot, arrayRemove, deleteDoc, limit } from "./firebase.js";
 
-const layer = document.getElementById('layer');
+const body = document.getElementsByTagName('body');
 const searchEmailInput = document.getElementById('searchEmailInput');
 const chatLoader = document.getElementById('chatLoader');
 const appContainer = document.querySelector('.app-container');
@@ -14,6 +14,7 @@ const contactListContaner = document.getElementById('contact-list-contaner');
 const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 let chatId = '';
 let isFirstTime = true;
+
 
 onAuthStateChanged(auth, async (user) => {
     if (user) {
