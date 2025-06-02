@@ -115,12 +115,7 @@ signUpBtn && signUpBtn.addEventListener('click', async (e) => {
           });
 
           signUpBtn.innerHTML = `Sign Up`;
-
           chatLoader.classList.remove('d-none')
-          console.log('running...');
-          setTimeout(() => {
-            window.location = '/chat.html'
-          }, 500)
 
         } catch (error) {
           handleSignupError(error);
@@ -143,12 +138,6 @@ signUpBtn && signUpBtn.addEventListener('click', async (e) => {
       signUpBtn.innerHTML = `Sign Up`;
 
       chatLoader.classList.remove('d-none')
-      console.log('running...');
-      
-      setTimeout(() => {
-        window.location = '/chat.html'
-      }, 500)
-
     }
   } catch (error) {
     handleSignupError(error);
@@ -217,10 +206,8 @@ loginBtn.addEventListener('click', async (e) => {
 
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, pass);
-    console.log("Login Success", userCredential.user);
     chatLoader.classList.remove('d-none');
     chatLoader.classList.add('d-flex');
-    console.log(appContainer);
     registerContainerWrapper.classList.add('d-none')
     appContainer.classList.remove('d-none');
     chatLoader.classList.add('d-none')

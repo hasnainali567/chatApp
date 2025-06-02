@@ -12,8 +12,13 @@ const searchUserBtn = document.getElementById('searchUserBtn');
 const headerUserName = document.getElementById('headerUserName');
 const contactListContaner = document.getElementById('contact-list-contaner');
 const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+const toggle = document.getElementById('toggle');
 let chatId = '';
 let isFirstTime = true;
+
+toggle.addEventListener('click', ()=>{
+    document.body.classList.toggle('dark')
+})
 
 
 onAuthStateChanged(auth, async (user) => {
@@ -92,7 +97,6 @@ searchEmailInput.addEventListener('input', () => {
     let value = searchEmailInput.value.trim();
 
     if (value.match(emailRegex)) {
-        console.log('Valid email');
         searchUserBtn.removeAttribute('disabled');
     } else {
         searchUserBtn.setAttribute('disabled', 'true');
@@ -102,7 +106,6 @@ searchEmailInput.addEventListener('input', () => {
 searchUserBtn.addEventListener('click', async () => {
     let search = searchEmailInput.value.trim().toLowerCase();
 
-    console.log("Searching for:", search);
 
     const q = query(
         collection(db, 'users'),
@@ -203,14 +206,11 @@ function setFriends(...friends) {
         let chatIds = [auth.currentUser.uid, elem.uid].sort().join("_");
 
         loadLastMessage(chatIds, elem.uid)
-        console.log('chatIds, ' + chatIds);
 
 
         contact.addEventListener('click', async (e) => {
 
             createChatId(e);
-            console.log(chatId === chatIds);
-            console.log(chatId);
             openChat(chatId, e);
             if (window.innerWidth >= 660) {
                 createChat(elem);
@@ -270,10 +270,6 @@ async function loadLastMessage(chatId, contactId) {
             const doc = querySnapshot.docs[0];
             const data = doc.data();
 
-            console.log(data);
-
-            // Update UI: Find the correct DOM nodes for this contact
-
             updateTime(data, contactId)
 
         }
@@ -321,7 +317,7 @@ function createChat(contact, isMobile) {
       </div>
     </div>
     <div id="chat" class="position-relative">
-      <div id="chatLoader" class="d-flex position-absolute top-0 start-0 w-100 h-100 bg-white justify-content-center align-items-center" style="z-index: 9999;">
+      <div id="chatLoader" class="d-flex position-absolute top-0 start-0 w-100 h-100 justify-content-center align-items-center" style="z-index: 9999;">
         <div class="text-center">
           <div class="spinner-grow text-primary" role="status"></div>
           <div class="spinner-grow text-secondary" role="status"></div>

@@ -23,10 +23,42 @@ body {
   width: 100vw;
 }
 
+
+.toggle {
+	 --size: 1.5rem;
+	 appearance: none;
+	 outline: none;
+	 cursor: pointer;
+	 width: var(--size);
+	 height: var(--size);
+	 box-shadow: inset calc(var(--size) * 0.33) calc(var(--size) * -0.25) 0;
+	 border-radius: 999px;
+	 color: #2c294a;
+	 transition: all 500ms;
+}
+ .toggle:checked {
+	 --ray-size: calc(var(--size) * -0.4);
+	 --offset-orthogonal: calc(var(--size) * 0.65);
+	 --offset-diagonal: calc(var(--size) * 0.45);
+	 transform: scale(0.75);
+	 color: #fff;
+	 box-shadow: inset 0 0 0 var(--size), calc(var(--offset-orthogonal) * -1) 0 0 var(--ray-size), var(--offset-orthogonal) 0 0 var(--ray-size), 0 calc(var(--offset-orthogonal) * -1) 0 var(--ray-size), 0 var(--offset-orthogonal) 0 var(--ray-size), calc(var(--offset-diagonal) * -1) calc(var(--offset-diagonal) * -1) 0 var(--ray-size), var(--offset-diagonal) var(--offset-diagonal) 0 var(--ray-size), calc(var(--offset-diagonal) * -1) var(--offset-diagonal) 0 var(--ray-size), var(--offset-diagonal) calc(var(--offset-diagonal) * -1) 0 var(--ray-size);
+}
+
+ .toggle {
+	 z-index: 1;
+}
+
+.contact-header  > div:last-child {
+  align-items: center;
+}
+ 
+
 .app-container {
   display: flex;
   height: 100%;
   width: 100%;
+  overflow: hidden;
 }
 
 .contact-list {
@@ -36,6 +68,7 @@ body {
   flex-direction: column;
   background-color: #FFFFFF;
   box-shadow: inset 0px 2px 10px rgb(205, 205, 205);
+  transition: .5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 
@@ -46,14 +79,15 @@ body {
 
 .contact-header {
   display: flex;
-  align-items: end;
+  align-items: center;
   justify-content: space-between;
-  padding: 15px 20px;
+  padding: 6px 0px 6px 20px;
   border-bottom: 2px solid rgba(228, 228, 228, 0.5);
   z-index: 99;
+  transition: .5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-.contact-header {
+.dark .contact-header {
   border-bottom: 2px solid rgb(75, 75, 75);
 }
 
@@ -67,6 +101,7 @@ body {
   font-weight: 500;
   margin-left: 1px;
   color: #747474;
+  transition: .5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .dark #headerTitle>span:first-child {
@@ -83,32 +118,31 @@ body {
 
 .contact-header>div:last-child {
   display: flex;
-  gap: 7px;
+  gap: 10px;
+  background-color: var(--purple);
+  padding: 10px 12px 10px 18px;
+  border-top-left-radius: 50px;
+  border-bottom-left-radius: 50px;
+}
+
+.dark .contact-header>div:last-child {
+  background-color: #211f37;
 }
 
 .contact-header>div>i {
   padding: 6px 7px;
-  margin-bottom: 5px;
   text-align: center;
   border-radius: 50%;
-  color: var(--icon-color);
-  border: 1.5px solid rgba(127, 127, 127, 0.545);
+  color: white;
+  border: 1.5px solid rgba(255, 255, 255, 0.545);
+  transition: .5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .dark .contact-header>div>i {
-  border-color: white;
+  border-color: #4e44c1;
+  color: #4e44c1;
 }
 
-.contact-header>div>i:last-child {
-  font-size: 1.15rem;
-  padding: 5.5px 8px;
-  transform: rotateZ(-15deg);
-}
-
-
-.fa-sun {
-  padding: 5.5px 5px !important;
-}
 
 #contact-list-contaner {
   /* padding-inline: 20px; */
@@ -125,6 +159,7 @@ body {
   margin-inline: 15px;
   cursor: pointer;
   transition: background 0.2s ease;
+  transition: .5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .dark .contact-item {
@@ -144,6 +179,7 @@ body {
   overflow: hidden;
   border: 2px solid rgba(200, 200, 200, 0.549);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transition: .5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .dark .contact-avatar {
@@ -166,6 +202,7 @@ body {
 .contact-name {
   font-size: .95rem;
   font-weight: 600;
+  transition: .5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .dark .contact-name {
@@ -179,6 +216,7 @@ body {
   white-space: nowrap;
   text-overflow: ellipsis;
   color: rgba(102, 102, 102, 0.4);
+  transition: .5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .dark .contact-message {
@@ -188,6 +226,7 @@ body {
 .contact-time {
   font-size: .7rem;
   color: #999999;
+  transition: .5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .dark .contact-time {
@@ -199,6 +238,7 @@ body {
   display: flex;
   flex-direction: column;
   background-color: var(--purple);
+  transition: .5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .dark .chat-section {
@@ -211,6 +251,7 @@ body {
   min-height: 50px;
   background: #4e44c1;
   color: var(--light);
+  transition: .5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .dark .chat-header {
@@ -241,6 +282,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1.5em;
+  transition: .5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .dark #chat {
@@ -251,9 +293,7 @@ body {
   padding: 0.5em .95em;
   border-radius: 18px;
   max-width: 70%;
-  min-height: 36.48px;
   height: auto;
-  max-height: max-content;
   font-size: 0.95em;
   line-height: 1.4;
   position: relative;
@@ -265,6 +305,7 @@ body {
   align-self: flex-start;
   border-top-left-radius: 0px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: .5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .dark .left {
@@ -277,6 +318,7 @@ body {
   align-self: flex-end;
   border-top-right-radius: 0px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: .5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .dark .right {
@@ -288,7 +330,7 @@ body {
   position: absolute;
   bottom: 0;
   word-wrap: nowrap;
-  min-width: 80px;
+  min-width: 65px;
   transform: translateY(120%);
   color: rgb(197, 197, 197);
   font-size: .8rem !important;
@@ -311,6 +353,7 @@ body {
   background: var(--purple);
   border-top-left-radius: 1em;
   border-top-right-radius: 1em;
+  transition: .5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .dark .chat-bar {
@@ -327,6 +370,7 @@ body {
   color: rgb(30, 30, 30);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
   transition: box-shadow 0.2s ease;
+  transition: .5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .dark .chat-bar__input {
@@ -342,6 +386,7 @@ body {
 .chat-bar__input:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(123, 112, 238, 0.3);
+  transition: .5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .dark .chat-bar__input:focus {
@@ -365,6 +410,7 @@ body {
   cursor: pointer;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: .5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .dark .chat-bar__buttons i {
@@ -389,6 +435,7 @@ body {
   padding-right: 25px;
   border-bottom-right-radius: 25px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: .5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .dark .chatBackBtn {
@@ -408,6 +455,7 @@ body {
   position: relative;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   cursor: pointer;
+  transition: .5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .dark .chat-header>div>.fa-trash {
@@ -531,8 +579,12 @@ label {
 }
 
 #chatLoader {
-  background-color: var(--purple) !important;
+  background-color: var(--purple) ;
   color: white;
+}
+
+.dark #chatLoader {
+  background-color: #211f37;
 }
 
 
@@ -686,9 +738,17 @@ label {
   text-align: center;
 }
 
+
+.dark .default-chat-screen {
+  background-color: #222831;
+}
 .default-chat-content img.default-logo {
   width: 200px;
   margin-bottom: 10px;
+}
+
+.default-chat-content img.default-logo {
+  mix-blend-mode: multiply;
 }
 
 .default-chat-content h2 {

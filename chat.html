@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <link rel="shortcut icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTdmrjoiXGVFEcd1cX9Arb1itXTr2u8EKNpw&s" type="image/x-icon">
-    <title>Chat App</title>
+    <title>MyChat</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
     <link href="style.css" rel="stylesheet" />
     <link rel="stylesheet" href="/bootstrap-5.3.6-dist/css/bootstrap.min.css">
@@ -17,7 +17,7 @@
     <div id="layer" class="d-none"></div>
     <!-- Fullscreen Loader -->
     <div id="chatLoader"
-        class="d-flex position-fixed top-0 start-0 w-100 h-100 bg-white justify-content-center align-items-center"
+        class="d-flex position-fixed top-0 start-0 w-100 h-100 justify-content-center align-items-center"
         style="z-index: 9999;">
         <div class="text-center">
             <div class="spinner-grow text-primary" role="status"></div>
@@ -35,7 +35,7 @@
                 </div>
                 <div>
                     <i id="addUser" class="fa-solid fa-magnifying-glass" style="cursor: pointer;"></i>
-                    <i id="darkBtn" class="fa-solid fa-moon"></i>
+                    <input id="toggle" class="toggle" type="checkbox">
                 </div>
 
             </div>
